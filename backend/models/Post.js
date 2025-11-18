@@ -11,6 +11,7 @@ const postSchema = new mongoose.Schema(
       type: String,
       enum: [
         "text",
+        "edit",
         "event",
         "job",
         "housing",

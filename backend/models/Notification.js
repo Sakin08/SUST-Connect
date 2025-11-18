@@ -13,7 +13,7 @@ const notificationSchema = new mongoose.Schema(
       enum: [
         "event_created",
         "event_interest",
-        "new_message",
+        
         "item_posted",
         "housing_posted",
         "event_posted",
