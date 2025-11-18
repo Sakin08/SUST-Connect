@@ -13,7 +13,7 @@ const notificationSchema = new mongoose.Schema(
       enum: [
         "event_created",
         "event_interest",
-        
+        "new_message",
         "item_posted",
         "housing_posted",
         "event_posted",
@@ -40,7 +40,7 @@ const notificationSchema = new mongoose.Schema(
     },
     title: { type: String, required: true },
     message: { type: String, required: true },
-    link: { type: String,default:false },
+    link: { type: String },
     read: { type: Boolean, default: false },
     data: { type: mongoose.Schema.Types.Mixed }, // Additional data
   },
