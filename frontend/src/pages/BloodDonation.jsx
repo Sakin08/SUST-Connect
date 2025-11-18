@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import DonorCard from "../components/DonorCard";
-import RequestCard from "../components/RequestCard";
+import DonorCard from "./DonorCard";
+import RequestCard from "./RequestCard";
 import axios from "axios";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5001/api";
