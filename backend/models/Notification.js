@@ -40,7 +40,7 @@ const notificationSchema = new mongoose.Schema(
     },
     title: { type: String, required: true },
     message: { type: String, required: true },
-    link: { type: String },
+    link: { type: String,default:false },
     read: { type: Boolean, default: false },
     data: { type: mongoose.Schema.Types.Mixed }, // Additional data
   },
