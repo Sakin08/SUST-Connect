@@ -15,6 +15,7 @@ import BuySellDetails from './pages/BuySellDetails.jsx';
 import Housing from './pages/Housing.jsx';
 import HousingDetails from './pages/HousingDetails.jsx';
 import CreateHousingPost from './pages/CreateHousingPost.jsx';
+import EditHousingPost from './pages/EditHousingPost.jsx';
 import Events from './pages/Events.jsx';
 import CreateEvent from './pages/CreateEvent.jsx';
 import Dashboard from './pages/Dashboard.jsx';
@@ -82,6 +83,7 @@ function AppContent() {
         <Route path="/housing" element={<Housing />} />
         <Route path="/housing/:id" element={<HousingDetails />} />
         <Route path="/housing/create" element={<ProtectedRoute><CreateHousingPost /></ProtectedRoute>} />
+        <Route path="/housing/edit/:id" element={<ProtectedRoute><EditHousingPost /></ProtectedRoute>} />
         <Route path="/events" element={<Events />} />
         <Route path="/events/create" element={<ProtectedRoute><CreateEvent /></ProtectedRoute>} />
         <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
