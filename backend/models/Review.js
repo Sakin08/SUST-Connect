@@ -24,7 +24,7 @@ const reviewSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Prevent duplicate reviews for same transaction
+
 reviewSchema.index(
   { reviewer: 1, reviewee: 1, relatedItem: 1 },
   { unique: true }
