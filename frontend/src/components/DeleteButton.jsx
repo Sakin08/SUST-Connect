@@ -9,7 +9,7 @@ const DeleteButton = ({
     className = '',
     size = 'md'
 }) => {
-    // Debug logging BEFORE calling canDelete
+    // Here Debug logging BEFORE calling canDelete
     console.log('=== DeleteButton Render ===');
     console.log('currentUser:', currentUser);
     console.log('contentOwner:', contentOwner);
