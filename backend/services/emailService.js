@@ -2,31 +2,54 @@ import { createTransport } from "nodemailer";
 
 // Create transporter
 const createTransporter = () => {
-  if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
-    console.log("✅ Using real email service:", process.env.EMAIL_USER);
-    console.log("📧 Gmail service configured");
+  // Brevo (Sendinblue) SMTP - Works on Render
+  if (process.env.BREVO_SMTP_KEY) {
+    console.log("✅ Using Brevo email service");
+    console.log("SMTP User:", process.env.BREVO_SMTP_USER);
+    console.log("SMTP Host: smtp-relay.brevo.com");
 
-    try {
-      const transporter = createTransport({
-        service: "gmail",
-        auth: {
-          user: process.env.EMAIL_USER,
-          pass: process.env.EMAIL_PASS,
-        },
-      });
-      return transporter;
-    } catch (error) {
-      console.error("❌ Failed to create email transporter:", error);
-      throw error;
-    }
+    // Use port 2525 for Render (less restricted than 587)
+    const port = parseInt(process.env.BREVO_SMTP_PORT || "2525");
+    console.log("SMTP Port:", port);
+
+    return createTransport({
+      host: "smtp-relay.brevo.com",
+      port: port,
+      secure: false, // false for 2525 and 587
+      auth: {
+        user: process.env.BREVO_SMTP_USER,
+        pass: process.env.BREVO_SMTP_KEY,
+      },
+      connectionTimeout: 30000,
+      greetingTimeout: 30000,
+      socketTimeout: 30000,
+      pool: true,
+      maxConnections: 5,
+      maxMessages: 100,
+      tls: {
+        rejectUnauthorized: false,
+      },
+    });
   }
 
-  // Fallback
+  // Gmail SMTP - Works on localhost only
+  if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
+    console.log("✅ Using Gmail service:", process.env.EMAIL_USER);
+    return createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
+  }
+
+  // Fallback for development
   console.warn("⚠️ No email credentials configured. Emails will be logged.");
   return {
     sendMail: async (mailOptions) => {
       console.log("\n" + "=".repeat(70));
-      console.log("📧 EMAIL SENT (Development Mode - Console Only)");
+      console.log("📧 EMAIL (Development Mode)");
       console.log("=".repeat(70));
       console.log("To:", mailOptions.to);
       console.log("Subject:", mailOptions.subject);
@@ -40,6 +63,15 @@ const createTransporter = () => {
 
 export const sendOTPEmail = async (email, otp, name) => {
   const transporter = createTransporter();
+
+  // Verify transporter connection before sending
+  try {
+    await transporter.verify();
+    console.log("✅ Email server connection verified");
+  } catch (error) {
+    console.error("❌ Email server connection failed:", error.message);
+    // Continue anyway - sometimes verify fails but sendMail works
+  }
 
   const mailOptions = {
     from: process.env.EMAIL_FROM || "SUST Connect <noreply@sustconnect.com>",
@@ -109,10 +141,24 @@ SUST Connect Team
   };
 
   try {
-    await transporter.sendMail(mailOptions);
+    const info = await transporter.sendMail(mailOptions);
     console.log("✅ OTP email sent to:", email);
+    console.log("Message ID:", info.messageId);
   } catch (error) {
     console.error("❌ Failed to send OTP email:", error);
+    console.error("Error details:", {
+      code: error.code,
+      command: error.command,
+      response: error.response,
+    });
+
+    // In production, log OTP to console as fallback
+    if (process.env.NODE_ENV === "production") {
+      console.log("\n" + "🔐".repeat(35));
+      console.log(`🔐 FALLBACK OTP FOR ${email}: ${otp}`);
+      console.log("🔐".repeat(35) + "\n");
+    }
+
     throw new Error(`Failed to send verification email: ${error.message}`);
   }
 };
