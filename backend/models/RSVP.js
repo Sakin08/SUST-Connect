@@ -20,6 +20,7 @@ const rsvpSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
 // Prevent duplicate RSVPs
 rsvpSchema.index({ event: 1, user: 1 }, { unique: true });
 

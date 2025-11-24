@@ -19,6 +19,7 @@ const commentSchema = new mongoose.Schema(
         "food",
         "lostfound",
         "bloodrequest",
+        "post",
       ],
       required: true,
     },
