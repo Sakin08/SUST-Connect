@@ -4,6 +4,8 @@ import { SocketProvider } from './context/SocketContext.jsx';
 import Navbar from './components/Navbar.jsx';
 import Footer from './components/Footer.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
+import ScrollToTop from './components/ScrollToTop.jsx';
+import PageTitle from './components/PageTitle.jsx';
 
 // Pages
 import Register from './pages/Register.jsx';
@@ -11,6 +13,7 @@ import Login from './pages/Login.jsx';
 import Home from './pages/Home.jsx';
 import BuySell from './pages/BuySell.jsx';
 import CreateBuySellPost from './pages/CreateBuySellPost.jsx';
+import EditBuySellPost from './pages/EditBuySellPost.jsx';
 import BuySellDetails from './pages/BuySellDetails.jsx';
 import Housing from './pages/Housing.jsx';
 import HousingDetails from './pages/HousingDetails.jsx';
@@ -18,6 +21,7 @@ import CreateHousingPost from './pages/CreateHousingPost.jsx';
 import EditHousingPost from './pages/EditHousingPost.jsx';
 import Events from './pages/Events.jsx';
 import CreateEvent from './pages/CreateEvent.jsx';
+import EditEvent from './pages/EditEvent.jsx';
 import Dashboard from './pages/Dashboard.jsx';
 import Messages from './pages/Messages.jsx';
 import Chat from './pages/Chat.jsx';
@@ -28,6 +32,7 @@ import CreateStudyGroup from './pages/CreateStudyGroup.jsx';
 import StudyGroupDetails from './pages/StudyGroupDetails.jsx';
 import Jobs from './pages/Jobs.jsx';
 import CreateJob from './pages/CreateJob.jsx';
+import EditJob from './pages/EditJob.jsx';
 import JobDetails from './pages/JobDetails.jsx';
 import FoodMenu from './pages/FoodMenu.jsx';
 import CreateFoodMenu from './pages/CreateFoodMenu.jsx';
@@ -46,6 +51,7 @@ import HolidayCalendar from './pages/HolidayCalendar.jsx';
 import BusSchedule from './pages/BusSchedule.jsx';
 import LostFound from './pages/LostFound.jsx';
 import CreateLostFound from './pages/CreateLostFound.jsx';
+import EditLostFound from './pages/EditLostFound.jsx';
 import LostFoundDetails from './pages/LostFoundDetails.jsx';
 import BloodDonation from './pages/BloodDonation.jsx';
 import RegisterDonor from './pages/RegisterDonor.jsx';
@@ -66,10 +72,14 @@ import HelpCenter from './pages/HelpCenter.jsx';
 
 function AppContent() {
   const location = useLocation();
-  const hideFooter = location.pathname === '/messages' || location.pathname === '/feed';
+  const hideFooter = location.pathname === '/messages' ||
+    location.pathname === '/feed' ||
+    location.pathname.startsWith('/chat/');
 
   return (
     <>
+      <ScrollToTop />
+      <PageTitle />
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
@@ -79,6 +89,7 @@ function AppContent() {
         <Route path="/login" element={<Login />} />
         <Route path="/buysell" element={<BuySell />} />
         <Route path="/buysell/create" element={<ProtectedRoute><CreateBuySellPost /></ProtectedRoute>} />
+        <Route path="/buysell/edit/:id" element={<ProtectedRoute><EditBuySellPost /></ProtectedRoute>} />
         <Route path="/buysell/:id" element={<BuySellDetails />} />
         <Route path="/housing" element={<Housing />} />
         <Route path="/housing/:id" element={<HousingDetails />} />
@@ -86,6 +97,7 @@ function AppContent() {
         <Route path="/housing/edit/:id" element={<ProtectedRoute><EditHousingPost /></ProtectedRoute>} />
         <Route path="/events" element={<Events />} />
         <Route path="/events/create" element={<ProtectedRoute><CreateEvent /></ProtectedRoute>} />
+        <Route path="/events/edit/:id" element={<ProtectedRoute><EditEvent /></ProtectedRoute>} />
         <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
         <Route path="/messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
         <Route path="/chat/:userId" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
@@ -98,6 +110,7 @@ function AppContent() {
         <Route path="/study-groups/:id" element={<StudyGroupDetails />} />
         <Route path="/jobs" element={<Jobs />} />
         <Route path="/jobs/create" element={<ProtectedRoute><CreateJob /></ProtectedRoute>} />
+        <Route path="/jobs/edit/:id" element={<ProtectedRoute><EditJob /></ProtectedRoute>} />
         <Route path="/jobs/:id" element={<JobDetails />} />
         <Route path="/food-menu" element={<FoodMenu />} />
         <Route path="/food-menu/create" element={<ProtectedRoute><CreateFoodMenu /></ProtectedRoute>} />
@@ -117,6 +130,7 @@ function AppContent() {
         <Route path="/bus-schedule" element={<BusSchedule />} />
         <Route path="/lost-found" element={<LostFound />} />
         <Route path="/lost-found/create" element={<ProtectedRoute><CreateLostFound /></ProtectedRoute>} />
+        <Route path="/lost-found/edit/:id" element={<ProtectedRoute><EditLostFound /></ProtectedRoute>} />
         <Route path="/lost-found/:id" element={<LostFoundDetails />} />
         <Route path="/blood-donation" element={<BloodDonation />} />
         <Route path="/blood-donation/register" element={<ProtectedRoute><RegisterDonor /></ProtectedRoute>} />

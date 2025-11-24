@@ -37,6 +37,11 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     const res = await api.post('/auth/login', { email, password });
 
+    // Store access token in localStorage
+    if (res.data.accessToken) {
+      localStorage.setItem('accessToken', res.data.accessToken);
+    }
+
     // After login, reload user profile to ensure we have latest data
     const profileRes = await api.get('/auth/profile');
     setUser(profileRes.data);
@@ -53,6 +58,7 @@ export const AuthProvider = ({ children }) => {
     } finally {
       setUser(null);
       localStorage.removeItem('hasAuth');
+      localStorage.removeItem('accessToken');
     }
   };
 
