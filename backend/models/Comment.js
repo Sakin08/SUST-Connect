@@ -12,6 +12,7 @@ const commentSchema = new mongoose.Schema(
       type: String,
       enum: [
         "buysell",
+        "marketplace",
         "housing",
         "event",
         "studygroup",
@@ -19,6 +20,7 @@ const commentSchema = new mongoose.Schema(
         "food",
         "lostfound",
         "bloodrequest",
+        "bookrequest",
         "post",
       ],
       required: true,

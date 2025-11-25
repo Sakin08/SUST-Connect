@@ -28,6 +28,7 @@ import savedPostRoutes from "./routes/savedPostRoutes.js";
 import quickMenuRoutes from "./routes/quickMenuRoutes.js";
 import holidayRoutes from "./routes/holidayRoutes.js";
 import busScheduleRoutes from "./routes/busScheduleRoutes.js";
+import bookRequestRoutes from "./routes/bookRequestRoutes.js";
 
 const app = express();
 
@@ -95,6 +96,7 @@ app.use("/api/saved-posts", savedPostRoutes);
 app.use("/api/quick-menu", quickMenuRoutes);
 app.use("/api/holidays", holidayRoutes);
 app.use("/api/bus-schedule", busScheduleRoutes);
+app.use("/api/book-requests", bookRequestRoutes);
 
 app.use(errorHandler);
 

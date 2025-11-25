@@ -87,6 +87,8 @@ const userSchema = new mongoose.Schema(
             "job",
             "food",
             "lostfound",
+            "post",
+            "bloodrequest",
           ],
           required: true,
         },
