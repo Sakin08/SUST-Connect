@@ -22,7 +22,7 @@ const userSchema = new mongoose.Schema(
     // OPTIONAL / EDITABLE FIELDS
     // ========================================
     profilePicture: { type: String, default: "" },
-    username: { type: String, unique: true, sparse: true }, // Display name
+    username: { type: String }, // Display name
     phone: { type: String },
     gender: {
       type: String,
@@ -87,6 +87,8 @@ const userSchema = new mongoose.Schema(
             "job",
             "food",
             "lostfound",
+            "post",
+            "bloodrequest",
           ],
           required: true,
         },

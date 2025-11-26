@@ -9,9 +9,14 @@ const api = axios.create({
   },
 });
 
-// Add request interceptor to include credentials
+// Add request interceptor to include access token
 api.interceptors.request.use(
   (config) => {
+    // Get access token from localStorage
+    const accessToken = localStorage.getItem("accessToken");
+    if (accessToken) {
+      config.headers.Authorization = `Bearer ${accessToken}`;
+    }
     console.log("Making request to:", config.url);
     return config;
   },
