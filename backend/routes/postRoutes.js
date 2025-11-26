@@ -1,0 +1,42 @@
+import express from "express";
+import { protect } from "../middleware/auth.js";
+import {
+  createPost,
+  getFeed,
+  getPost,
+  updatePost,
+  deletePost,
+  toggleLike,
+  addComment,
+  updateComment,
+  deleteComment,
+  sharePost,
+  toggleSave,
+  getSavedPosts,
+  getUserPosts,
+  getTrendingTopics,
+  getCampusStats,
+} from "../controllers/postController.js";
+
+const router = express.Router();
+
+// Post CRUD
+router.post("/", protect, createPost);
+router.get("/feed", protect, getFeed);
+router.get("/saved", protect, getSavedPosts);
+router.get("/trending-topics", protect, getTrendingTopics);
+router.get("/campus-stats", protect, getCampusStats);
+router.get("/user/:userId", protect, getUserPosts);
+router.get("/:id", protect, getPost);
+router.put("/:id", protect, updatePost);
+router.delete("/:id", protect, deletePost);
+
+// Interactions
+router.post("/:id/like", protect, toggleLike);
+router.post("/:id/comment", protect, addComment);
+router.put("/:id/comment/:commentId", protect, updateComment);
+router.delete("/:id/comment/:commentId", protect, deleteComment);
+router.post("/:id/share", protect, sharePost);
+router.post("/:id/save", protect, toggleSave);
+
+export default router;
