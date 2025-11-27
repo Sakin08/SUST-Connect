@@ -5,12 +5,12 @@ import {
 
 const Features = () => {
     const features = [
-        {
+        {//chating
             icon: MessageSquare,
             title: "Real-time Messaging",
             description: "Connect instantly with classmates through our built-in messaging system with online status indicators."
         },
-        {
+        {//academic calender
             icon: Calendar,
             title: "Events & Activities",
             description: "Discover and create campus events, RSVP, and never miss out on what's happening around you."
