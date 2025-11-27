@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { ChevronDown, ChevronUp } from 'lucide-react';
-
+//FAQ system added
 const FAQ = () => {
     const [openIndex, setOpenIndex] = useState(null);
 
