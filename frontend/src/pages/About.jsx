@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { Users, Target, Heart, Zap } from 'lucide-react';
 
 const About = () => {
-    return (
+    return (//about all systems 
         <div className="min-h-screen bg-gray-50">
             <div className="bg-gradient-to-r from-indigo-600 to-blue-600 text-white py-20">
                 <div className="container mx-auto px-4">
