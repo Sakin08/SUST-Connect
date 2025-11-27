@@ -216,3 +216,26 @@ export const sendWelcomeEmail = async (email, name) => {
     console.error("❌ Failed to send welcome email:", error);
   }
 };
+
+// Generic send email function
+export const sendEmail = async ({ to, subject, html, text }) => {
+  const transporter = createTransporter();
+
+  const mailOptions = {
+    from: process.env.EMAIL_FROM || "SUST Connect <noreply@sustconnect.com>",
+    to,
+    subject,
+    html,
+    text,
+  };
+
+  try {
+    const info = await transporter.sendMail(mailOptions);
+    console.log("✅ Email sent to:", to);
+    console.log("Message ID:", info.messageId);
+    return info;
+  } catch (error) {
+    console.error("❌ Failed to send email:", error);
+    throw error;
+  }
+};
