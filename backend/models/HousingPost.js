@@ -18,9 +18,8 @@ const housingPostSchema = new mongoose.Schema(
     // Basic Info
     title: { type: String, required: true },
     location: { type: String, required: true }, // Area name (Kumargaon, Shahjalal Upashahar, etc.)
-    address: { type: String, required: true }, // Full address
     rent: { type: Number, required: true },
-    availableFrom: { type: Date, required: true },
+    availableFrom: { type: Date }, // Optional - not everyone knows exact date
 
     // Capacity
     totalSeats: { type: Number }, // For seat/room posts
@@ -70,10 +69,10 @@ const housingPostSchema = new mongoose.Schema(
     utilitiesIncluded: { type: Boolean, default: false },
 
     // Description
-    description: { type: String, required: true },
+    description: { type: String }, // Optional - title and location might be enough
 
     // Contact
-    phone: { type: String, required: true },
+    phone: { type: String }, // Optional - can use platform messaging
     preferredContact: {
       type: String,
       enum: ["phone", "message", "both"],
