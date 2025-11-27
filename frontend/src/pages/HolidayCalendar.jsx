@@ -21,6 +21,7 @@ const HolidayCalendar = () => {
     useEffect(() => {
         loadHolidays();
     }, []);
+    
 
     const loadHolidays = async () => {
         try {
