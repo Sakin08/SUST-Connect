@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Mail, Phone, MapPin, Send } from 'lucide-react';
-
+//contact
 const Contact = () => {
     const [formData, setFormData] = useState({
         name: '',
