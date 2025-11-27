@@ -379,7 +379,7 @@ const Dashboard = () => {
                     to="/saved"
                     className="text-center bg-gray-100 text-gray-700 py-2 rounded-lg font-semibold hover:bg-gray-200 transition text-sm"
                   >
-                    ❤️ Saved
+                    👍 Saved
                   </Link>
                 </div> */}
 
