@@ -42,7 +42,7 @@ const Contact = () => {
                         <div className="bg-white rounded-lg shadow-lg p-8">
                             <h2 className="text-2xl font-bold text-gray-900 mb-6">Send us a message</h2>
                             
-                            {submitted && (
+                            {submitted && (//notification message
                                 <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg text-green-800">
                                     Thank you! Your message has been sent successfully.
                                 </div>
