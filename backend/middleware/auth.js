@@ -5,20 +5,22 @@ export const protect = async (req, res, next) => {
   let token;
   let isAccessToken = false;
 
-  // Check for access token in Authorization header first (for cross-domain)
+  // PRIORITY 1: Check Authorization header (works on all devices including iOS)
   if (
     req.headers.authorization &&
     req.headers.authorization.startsWith("Bearer ")
   ) {
     token = req.headers.authorization.split(" ")[1];
     isAccessToken = true;
-  } else if (req.cookies?.refreshToken) {
-    // Fallback to refresh token in cookies (for same-domain)
+  }
+  // PRIORITY 2: Fallback to refresh token in cookies (may not work on iOS Safari)
+  else if (req.cookies?.refreshToken) {
     token = req.cookies.refreshToken;
     isAccessToken = false;
   }
 
   if (!token) {
+    console.log("Auth failed - No token found in headers or cookies");
     return res.status(401).json({ message: "Not authorized, no token" });
   }
 
