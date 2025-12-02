@@ -5,7 +5,7 @@ import axios from 'axios';
 import {
     Camera, MapPin, Calendar, Mail, Phone, Users, Heart,
     MessageCircle, Share2, Edit, Award, BookOpen,
-    Home, CheckCircle, Star, X, Save
+    Home, CheckCircle, X, Save
 } from 'lucide-react';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
@@ -22,6 +22,9 @@ const UserProfile = () => {
     const [showFollowModal, setShowFollowModal] = useState(false);
     const [followModalType, setFollowModalType] = useState('followers'); // 'followers' or 'following'
     const [followSearchQuery, setFollowSearchQuery] = useState('');
+    const [showPasswordModal, setShowPasswordModal] = useState(false);
+    const [passwordData, setPasswordData] = useState({ currentPassword: '', newPassword: '', confirmPassword: '' });
+    const [passwordMessage, setPasswordMessage] = useState({ type: '', text: '' });
 
     useEffect(() => {
         loadProfile();
@@ -106,17 +109,18 @@ const UserProfile = () => {
         try {
             const updatedData = {
                 name: editData.name,
-                username: editData.username.trim() || null,
+                username: editData.username?.trim() || null,
                 bio: editData.bio,
                 phone: editData.phone,
                 gender: editData.gender,
                 dateOfBirth: editData.dateOfBirth || undefined,
-                interests: editData.interests.split(',').map(i => i.trim()).filter(Boolean),
+                interests: editData.interests ? editData.interests.split(',').map(i => i.trim()).filter(Boolean) : [],
                 socialLinks: editData.socialLinks,
                 address: editData.address,
                 dormInfo: editData.dormInfo
             };
 
+            console.log('Saving profile with data:', updatedData);
             const res = await axios.put(`${API_URL}/users/profile`, updatedData, { withCredentials: true });
             setProfile(prev => ({ ...prev, ...res.data }));
             if (currentUser) {
@@ -126,7 +130,39 @@ const UserProfile = () => {
             setSaveMessage({ type: 'success', text: 'Profile updated successfully!' });
             setTimeout(() => setSaveMessage({ type: '', text: '' }), 3000);
         } catch (err) {
+            console.error('Profile save error:', err.response?.data);
             setSaveMessage({ type: 'error', text: err.response?.data?.message || 'Failed to update profile' });
+        }
+    };
+
+    const handlePasswordUpdate = async (e) => {
+        e.preventDefault();
+        setPasswordMessage({ type: '', text: '' });
+
+        if (passwordData.newPassword !== passwordData.confirmPassword) {
+            setPasswordMessage({ type: 'error', text: 'New passwords do not match' });
+            return;
+        }
+
+        if (passwordData.newPassword.length < 6) {
+            setPasswordMessage({ type: 'error', text: 'Password must be at least 6 characters' });
+            return;
+        }
+
+        try {
+            await axios.put(`${API_URL}/users/password`, {
+                currentPassword: passwordData.currentPassword,
+                newPassword: passwordData.newPassword
+            }, { withCredentials: true });
+
+            setPasswordMessage({ type: 'success', text: 'Password updated successfully!' });
+            setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
+            setTimeout(() => {
+                setShowPasswordModal(false);
+                setPasswordMessage({ type: '', text: '' });
+            }, 2000);
+        } catch (err) {
+            setPasswordMessage({ type: 'error', text: err.response?.data?.message || 'Failed to update password' });
         }
     };
 
@@ -151,7 +187,7 @@ const UserProfile = () => {
     const isOwnProfile = currentUser?._id === id;
 
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-gradient-to-br from-gray-700 via-slate-700 to-gray-600">
             {/* Hero Section with Cover */}
             <div className="relative h-64 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500">
                 <div className="absolute inset-0 bg-black/20"></div>
@@ -232,9 +268,6 @@ const UserProfile = () => {
                                             <button
                                                 onClick={() => {
                                                     setIsEditing(!isEditing);
-                                                    if (!isEditing) {
-                                                        setActiveTab('about');
-                                                    }
                                                 }}
                                                 className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold transition-all shadow-lg ${isEditing
                                                     ? 'bg-gray-200 text-gray-700 hover:bg-gray-300'
@@ -249,6 +282,14 @@ const UserProfile = () => {
                                                     className="flex items-center gap-2 px-6 py-3 bg-green-600 text-white rounded-xl font-bold hover:bg-green-700 transition-all shadow-lg"
                                                 >
                                                     <Save className="w-5 h-5" /> Save Changes
+                                                </button>
+                                            )}
+                                            {!isEditing && (
+                                                <button
+                                                    onClick={() => setShowPasswordModal(true)}
+                                                    className="flex items-center gap-2 px-6 py-3 bg-gray-600 text-white rounded-xl font-bold hover:bg-gray-700 transition-all shadow-lg"
+                                                >
+                                                    Change Password
                                                 </button>
                                             )}
                                         </>
@@ -310,17 +351,6 @@ const UserProfile = () => {
                                     <div className="text-2xl font-extrabold text-gray-900">{profile.following?.length || 0}</div>
                                     <div className="text-sm text-gray-600">Following</div>
                                 </button>
-                                <div className="text-center">
-                                    <div className="text-2xl font-extrabold text-gray-900">{profile.reputationPoints || 0}</div>
-                                    <div className="text-sm text-gray-600">Reputation</div>
-                                </div>
-                                <div className="text-center">
-                                    <div className="flex items-center justify-center gap-1">
-                                        <Star className="w-5 h-5 text-yellow-500" fill="currentColor" />
-                                        <span className="text-2xl font-extrabold text-gray-900">{profile.rating?.toFixed(1) || '0.0'}</span>
-                                    </div>
-                                    <div className="text-sm text-gray-600">Rating ({profile.reviewCount || 0})</div>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -453,6 +483,87 @@ const UserProfile = () => {
                                 );
                             })()}
                         </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Password Change Modal */}
+            {showPasswordModal && (
+                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                    <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 animate-fadeIn">
+                        <h3 className="text-2xl font-bold text-gray-900 mb-4">Change Password</h3>
+
+                        <form onSubmit={handlePasswordUpdate} className="space-y-4">
+                            <div>
+                                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                                    Current Password
+                                </label>
+                                <input
+                                    type="password"
+                                    value={passwordData.currentPassword}
+                                    onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })}
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                                    required
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                                    New Password
+                                </label>
+                                <input
+                                    type="password"
+                                    value={passwordData.newPassword}
+                                    onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                                    required
+                                    minLength={6}
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                                    Confirm New Password
+                                </label>
+                                <input
+                                    type="password"
+                                    value={passwordData.confirmPassword}
+                                    onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                                    required
+                                    minLength={6}
+                                />
+                            </div>
+
+                            {passwordMessage.text && (
+                                <div className={`p-3 rounded-xl text-sm font-semibold ${passwordMessage.type === 'success'
+                                        ? 'bg-green-50 text-green-700 border border-green-200'
+                                        : 'bg-red-50 text-red-700 border border-red-200'
+                                    }`}>
+                                    {passwordMessage.text}
+                                </div>
+                            )}
+
+                            <div className="flex gap-3 pt-2">
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setShowPasswordModal(false);
+                                        setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
+                                        setPasswordMessage({ type: '', text: '' });
+                                    }}
+                                    className="flex-1 px-4 py-3 bg-gray-200 text-gray-700 rounded-xl font-bold hover:bg-gray-300 transition"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="submit"
+                                    className="flex-1 px-4 py-3 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 transition"
+                                >
+                                    Update Password
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             )}
