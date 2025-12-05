@@ -35,6 +35,8 @@ const notificationSchema = new mongoose.Schema(
         "admin_warning",
         "admin_info",
         "system_alert",
+        "report_submitted",
+        "report_reviewed",
       ],
       required: true,
     },

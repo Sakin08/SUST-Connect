@@ -93,8 +93,21 @@ const housingPostSchema = new mongoose.Schema(
     user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
     views: { type: Number, default: 0 },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  }
 );
+
+// Virtual for comment count
+housingPostSchema.virtual("commentCount", {
+  ref: "Comment",
+  localField: "_id",
+  foreignField: "postId",
+  count: true,
+  match: { postType: "housing" },
+});
 
 // Index for search
 housingPostSchema.index({

@@ -11,7 +11,20 @@ const reportSchema = new mongoose.Schema(
     reportedItem: { type: mongoose.Schema.Types.ObjectId },
     itemType: {
       type: String,
-      enum: ["user", "buysell", "housing", "event", "message"],
+      enum: [
+        "user",
+        "buysell",
+        "housing",
+        "event",
+        "message",
+        "job",
+        "lostfound",
+        "studygroup",
+        "blooddonor",
+        "bookrequest",
+        "comment",
+        "post",
+      ],
       required: true,
     },
     reason: {
