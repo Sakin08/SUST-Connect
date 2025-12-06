@@ -1,25 +1,16 @@
 <div align="center">
 
-# 🎓 SUST Connect
-
+# 🎓 SUST Connect  
 ### Your Complete Campus Companion
 
-<<<<<<< Updated upstream
 [![Live Demo](https://img.shields.io/badge/demo-live-success?style=for-the-badge)](https://sust-connect-eta.vercel.app/)
-=======
-[![Live Demo](https://img.shields.io/badge/demo-live-success?style=for-the-badge)](https://sust-connect-silk.vercel.app)
->>>>>>> Stashed changes
 [![License](https://img.shields.io/badge/license-MIT-blue?style=for-the-badge)](LICENSE)
 [![Node](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen?style=for-the-badge&logo=node.js)](https://nodejs.org)
 [![React](https://img.shields.io/badge/react-19.2.0-61dafb?style=for-the-badge&logo=react)](https://react.dev)
 
 **A comprehensive social networking and campus management platform for Shahjalal University of Science and Technology (SUST)**
 
-<<<<<<< Updated upstream
-[Features](#-features) • [Demo](#-demo) • [Installation](#-installation) • [Tech Stack](#-tech-stack) 
-=======
-[Features](#-features) • [Demo](#-demo) • [Installation](#-installation) • [Tech Stack](#-tech-stack) • [Documentation](#-documentation)
->>>>>>> Stashed changes
+[Features](#-features) • [Demo](#-demo) • [Installation](#-installation) • [Tech Stack](#-tech-stack)  
 
 </div>
 
@@ -27,20 +18,20 @@
 
 ## 📖 About
 
-SUST Connect is a full-stack web application designed to revolutionize campus life by providing a centralized platform for students, teachers, and staff to connect, collaborate, and access essential campus services. From marketplace to messaging, events to elections, everything you need is in one place.
+SUST Connect is a full-stack web application designed to improve campus life by providing a single digital platform for students, teachers, and staff. From marketplace to messaging, events to elections — everything is in one place.
 
 ### 🎯 Key Highlights
 
-- 🔐 **Secure Authentication** - JWT-based auth with OTP verification
-- 💬 **Real-time Messaging** - Instant chat with Socket.IO
-- 📱 **Social Networking** - Posts, comments, likes, and follows
-- 🛒 **Campus Marketplace** - Buy/sell items and find housing
-- 📅 **Event Management** - Create, RSVP, and track campus events
-- 🍔 **Food Ordering** - Browse menus and order from campus restaurants
-- 🩸 **Blood Donation** - Connect donors with those in need
-- 🗳️ **Digital Elections** - Secure student election voting system
-- 📚 **Study Groups** - Collaborate with peers
-- 💼 **Job Board** - Find internships and part-time opportunities
+- 🔐 **Secure Authentication** – JWT + OTP verification  
+- 💬 **Real-time Chat** – Socket.IO messaging  
+- 🛒 **Marketplace** – Buy/sell items & housing  
+- 📱 **Social Networking** – Posts, comments, likes  
+- 📅 **Events** – Create, RSVP, reminders  
+- 🍔 **Food Menu & Orders**  
+- 🩸 **Blood Donation Network**  
+- 🗳️ **Digital Elections**  
+- 💼 **Job Board**  
+- 📚 **Study Groups**
 
 ---
 
@@ -51,147 +42,103 @@ SUST Connect is a full-stack web application designed to revolutionize campus li
 <td width="50%">
 
 ### 🌐 Social Networking
-
-- Personalized newsfeed
-- Create posts with images
-- Like, comment, share
-- Follow/unfollow users
-- User profiles & activity
-- Save posts for later
+- Personalized newsfeed  
+- Create posts with images  
+- Like, comment, share  
+- Follow/Unfollow users  
+- Save posts  
+- User profiles  
 
 ### 🛍️ Marketplace
+- Buy & Sell items  
+- Housing listings  
+- Search & filters  
+- Contact sellers  
+- Image gallery  
+- Mark items sold  
 
-- **Buy/Sell**: List items for sale
-- **Housing**: Find rooms/apartments
-- Image uploads & galleries
-- Search & filter options
-- Contact sellers directly
-- Mark items as sold
-
-### 📅 Events & Calendar
-
-- Create & manage events
-- RSVP with capacity limits
-- Event reminders
-- Map integration
-- Category-based browsing
-- Academic calendar
+### 📅 Events
+- Event creation  
+- RSVP system  
+- Reminders  
+- Map integration  
+- Academic calendar  
 
 </td>
 <td width="50%">
 
-### 💬 Communication
-
-- Real-time one-on-one chat
-- Online status indicators
-- Typing indicators
-- Read receipts
-- File sharing
-- Message notifications
+### 💬 Messaging
+- Real-time chat  
+- Typing indicator  
+- Online status  
+- File sending  
+- Read receipts  
 
 ### 🍕 Food Services
-
-- Restaurant profiles
-- Browse menus
-- Place orders
-- Quick menu posts
-- Reviews & ratings
-- Order tracking
+- Restaurant profiles  
+- Menus  
+- Order system  
+- Reviews & ratings  
 
 ### 🎓 Academic Tools
-
-- Study group creation
-- Book exchange requests
-- Course discussions
-- Resource sharing
-- Academic events
+- Study groups  
+- Book exchange  
+- Course discussions  
+- Academic resources  
 
 </td>
 </tr>
 </table>
 
-### 🚀 Additional Features
+### 🚀 Additional
 
-- 🩸 **Blood Donation Network** - Emergency blood requests and donor registry
-- 🔍 **Lost & Found** - Report and find lost items
-- 🗳️ **Student Elections** - Digital voting with real-time results
-- 🚌 **Bus Schedule** - Campus transportation timings
-- 📢 **Notifications** - Real-time updates for all activities
-- 👨‍💼 **Admin Panel** - Complete platform management
-- 📊 **Analytics Dashboard** - Usage statistics and insights
-- 🔒 **Role-Based Access** - Student, Teacher, Admin roles
+- Lost & Found  
+- Bus schedules  
+- Notifications  
+- Admin panel  
+- Analytics dashboard  
 
 ---
 
 ## 🎬 Demo
 
-### 🌐 Live Application
+### 🌐 Live Application  
+**Frontend**: https://sust-connect-eta.vercel.app  
+**Backend API**: Render Hosting
 
-<<<<<<< Updated upstream
-**Frontend**: [SUST-Connect](https://sust-connect-eta.vercel.app/)  
-**Backend API**: Deployed on Render
+---
 
-### 📸 Screenshots  
+## 📸 Screenshots  
 
 <table>
   <tr>
     <td>
       <a href="https://i.postimg.cc/hfHfFYbK/home.png">
-        <img src="https://i.postimg.cc/hfHfFYbK/home.png" width="400" alt="Home Page" />
+        <img src="https://i.postimg.cc/hfHfFYbK/home.png" width="420" alt="Home Page" />
       </a>
     </td>
     <td>
       <a href="https://i.postimg.cc/PCYNdM2W/newsfeed.png">
-        <img src="https://i.postimg.cc/PCYNdM2W/newsfeed.png" width="400" alt="Newsfeed" />
+        <img src="https://i.postimg.cc/PCYNdM2W/newsfeed.png" width="420" alt="Newsfeed" />
       </a>
     </td>
   </tr>
   <tr>
     <td>
       <a href="https://i.postimg.cc/9DZzcBJ0/messages.png">
-        <img src="https://i.postimg.cc/9DZzcBJ0/messages.png" width="400" alt="Messaging" />
+        <img src="https://i.postimg.cc/9DZzcBJ0/messages.png" width="420" alt="Messaging" />
       </a>
     </td>
     <td>
       <a href="https://i.postimg.cc/sBzxxZN5/marketplace.png">
-        <img src="https://i.postimg.cc/sBzxxZN5/marketplace.png" width="400" alt="Marketplace" />
+        <img src="https://i.postimg.cc/sBzxxZN5/marketplace.png" width="420" alt="Marketplace" />
       </a>
     </td>
   </tr>
 </table>
 
+---
 
-
-
-
-
-=======
-**Frontend**: [https://sust-connect-silk.vercel.app](https://sust-connect-silk.vercel.app)  
-**Backend API**: Deployed on Render
-
-### 📸 Screenshots
-
-<details>
-<summary>Click to view screenshots</summary>
-
-#### Home Page
-
-![Home Page](screenshots/home.png)
-
-#### Newsfeed
-
-![Newsfeed](screenshots/newsfeed.png)
-
-#### Messaging
-
-![Messaging](screenshots/messages.png)
-
-#### Marketplace
-
-![Marketplace](screenshots/marketplace.png)
-
-</details>
->>>>>>> Stashed changes
 
 ---
 
@@ -360,8 +307,7 @@ sust-connect/
 
 ---
 
-<<<<<<< Updated upstream
-=======
+
 ## 🔌 API Endpoints
 
 ### Core Endpoints
@@ -398,8 +344,7 @@ POST   /api/chat/messages
 ... and 200+ more endpoints
 ```
 
-See [PROJECT_DOCUMENTATION.md](PROJECT_DOCUMENTATION.md) for complete API reference.
->>>>>>> Stashed changes
+
 
 ---
 
@@ -431,13 +376,7 @@ vercel --prod
 2. Set environment variables
 3. Deploy automatically on push
 
-### Environment Variables
 
-<<<<<<< Updated upstream
-
-=======
-See [PROJECT_DOCUMENTATION.md](PROJECT_DOCUMENTATION.md) for complete list.
->>>>>>> Stashed changes
 
 ---
 
@@ -458,16 +397,7 @@ npm run test:e2e
 
 ---
 
-<<<<<<< Updated upstream
 
-=======
-## 📚 Documentation
-
-- **[Complete Documentation](PROJECT_DOCUMENTATION.md)** - Comprehensive A-Z guide
-- **[API Reference](PROJECT_DOCUMENTATION.md#7-api-endpoints)** - All endpoints
-- **[Database Models](PROJECT_DOCUMENTATION.md#6-database-models)** - Schema details
-- **[Security Guide](PROJECT_DOCUMENTATION.md#15-security-features)** - Security practices
->>>>>>> Stashed changes
 
 ---
 
@@ -490,8 +420,7 @@ Contributions are welcome! Please follow these steps:
 
 ---
 
-<<<<<<< Updated upstream
-=======
+
 ## 🐛 Known Issues
 
 - [ ] Mobile responsiveness needs improvement
@@ -499,7 +428,7 @@ Contributions are welcome! Please follow these steps:
 - [ ] Search functionality can be enhanced
 
 See [Issues](https://github.com/yourusername/sust-connect/issues) for more.
->>>>>>> Stashed changes
+
 
 ---
 
@@ -526,7 +455,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 **SUST Connect Development Team**
 
-<<<<<<< Updated upstream
 
 - GitHub: [@sakin08](https://github.com/sakin08) – Sr Sakin 
 - GitHub: [@arif-bepari](https://github.com/arif-bepari) – Arif 
@@ -536,10 +464,10 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Email: 2021331003@student.sust.edu 
 - Email: 2021331064@student.sust.edu
 
-=======
+
 - GitHub: [@yourusername](https://github.com/yourusername)
 - Email: contact@sustconnect.com
->>>>>>> Stashed changes
+
 
 ---
 
@@ -553,7 +481,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Support
 
-<<<<<<< Updated upstream
+
 - 📧 Email: teamsustconnect@gmail.com
 - 🐛 Issues: [GitHub Issues](https://github.com/sakin08/sust-connect/issues)
 - 💬 Discussions: [GitHub Discussions](https://github.com/sakin08/sust-connect/discussions)
@@ -561,7 +489,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - 📧 Email: support@sustconnect.com
 - 🐛 Issues: [GitHub Issues](https://github.com/yourusername/sust-connect/issues)
 - 💬 Discussions: [GitHub Discussions](https://github.com/yourusername/sust-connect/discussions)
->>>>>>> Stashed changes
 
 ---
 
