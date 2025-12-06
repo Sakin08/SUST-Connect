@@ -88,15 +88,31 @@ export const getBookRequests = async (req, res) => {
       .limit(parseInt(limit))
       .skip(skip);
 
+    // Add comment count to each book request
+    const Comment = (await import("../models/Comment.js")).default;
+    const requestsWithComments = await Promise.all(
+      bookRequests.map(async (request) => {
+        const commentCount = await Comment.countDocuments({
+          postId: request._id,
+          postType: "bookrequest",
+        });
+        return {
+          ...request.toObject(),
+          commentCount,
+        };
+      })
+    );
+
     const total = await BookRequest.countDocuments(query);
 
     res.json({
-      bookRequests,
+      bookRequests: requestsWithComments,
       currentPage: parseInt(page),
       totalPages: Math.ceil(total / limit),
       total,
     });
   } catch (error) {
+    console.error("Error in getBookRequests:", error);
     res.status(500).json({ message: error.message });
   }
 };
@@ -236,6 +252,10 @@ export const addResponse = async (req, res) => {
       "name profilePicture department batch"
     );
 
+    // Invalidate cache
+    const { deleteCachePattern } = await import("../services/cacheService.js");
+    deleteCachePattern("route_/api/book-requests");
+
     // Notify requester
     if (bookRequest.requester.toString() !== req.user._id.toString()) {
       const { notifyContentOwner } = await import(
@@ -286,6 +306,10 @@ export const deleteResponse = async (req, res) => {
       "responses.user",
       "name profilePicture department batch"
     );
+
+    // Invalidate cache
+    const { deleteCachePattern } = await import("../services/cacheService.js");
+    deleteCachePattern("route_/api/book-requests");
 
     res.json(bookRequest);
   } catch (error) {

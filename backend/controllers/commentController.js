@@ -1,0 +1,397 @@
+import Comment from "../models/Comment.js";
+import Notification from "../models/Notification.js";
+import User from "../models/User.js";
+import { notifyContentOwner } from "./notificationController.js";
+import { deleteCachePattern } from "../services/cacheService.js";
+
+// Helper function to get correct notification link for each post type
+function getNotificationLink(postType, postId) {
+  const linkMap = {
+    post: `/post/${postId}`,
+    event: `/events`,
+    buysell: `/buysell/${postId}`,
+    marketplace: `/buysell/${postId}`, // Support both buysell and marketplace
+    housing: `/housing/${postId}`,
+    job: `/jobs/${postId}`,
+    lostfound: `/lost-found/${postId}`,
+    studygroup: `/study-groups/${postId}`,
+    bloodrequest: `/blood-donation/request/${postId}`,
+    bookrequest: `/books/${postId}`,
+    food: `/restaurants`,
+  };
+  return linkMap[postType] || `/${postType}/${postId}`;
+}
+
+export const createComment = async (req, res) => {
+  try {
+    const { content, postType, postId, parentComment, replyTo, mentions } =
+      req.body;
+
+    const comment = await Comment.create({
+      content,
+      author: req.user._id,
+      postType,
+      postId,
+      parentComment,
+      replyTo,
+      mentions: mentions || [],
+    });
+
+    await comment.populate("author", "name profilePicture");
+    await comment.populate("replyTo", "name");
+
+    // Invalidate cache for the post type
+    if (postType === "buysell" || postType === "marketplace") {
+      deleteCachePattern("route_/api/buysell");
+    } else if (postType === "job") {
+      deleteCachePattern("route_/api/jobs");
+    } else if (postType === "housing") {
+      deleteCachePattern("route_/api/housing");
+    } else if (postType === "lostfound") {
+      deleteCachePattern("route_/api/lost-found");
+    } else if (postType === "event") {
+      deleteCachePattern("route_/api/events");
+    } else if (postType === "bookrequest") {
+      deleteCachePattern("route_/api/book-requests");
+    }
+
+    // Get post owner and notify them (if not replying to someone)
+    if (!replyTo) {
+      try {
+        const postOwner = await getPostOwner(postType, postId);
+        console.log(
+          `[Comment Notification] PostType: ${postType}, PostId: ${postId}, PostOwner: ${postOwner}, Commenter: ${req.user._id}`
+        );
+
+        if (postOwner && postOwner.toString() !== req.user._id.toString()) {
+          const notificationLink = getNotificationLink(postType, postId);
+          console.log(
+            `[Comment Notification] Sending notification to ${postOwner} with link: ${notificationLink}`
+          );
+
+          // Get friendly post type name
+          const postTypeNames = {
+            buysell: "marketplace post",
+            marketplace: "marketplace post",
+            job: "job post",
+            bloodrequest: "blood request",
+            bookrequest: "book request",
+            event: "event",
+            housing: "housing post",
+            lostfound: "lost & found post",
+            studygroup: "study group",
+            post: "post",
+          };
+          const friendlyPostType = postTypeNames[postType] || postType;
+
+          await notifyContentOwner(
+            postOwner,
+            req.user._id,
+            "comment",
+            `your ${friendlyPostType}`,
+            notificationLink
+          );
+        } else {
+          console.log(
+            `[Comment Notification] Skipped - Owner is commenter or no owner found`
+          );
+        }
+      } catch (notifError) {
+        console.error("Failed to send comment notification:", notifError);
+      }
+    }
+
+    // Notify user being replied to
+    if (replyTo && replyTo.toString() !== req.user._id.toString()) {
+      try {
+        const repliedUser = await User.findById(replyTo);
+        if (repliedUser) {
+          await Notification.create({
+            recipient: replyTo,
+            sender: req.user._id,
+            type: "comment_added",
+            title: `${req.user.name} replied to your comment`,
+            message: content.substring(0, 100),
+            link: getNotificationLink(postType, postId),
+          });
+
+          // Emit socket event
+          if (req.app.get("io")) {
+            const io = req.app.get("io");
+            io.to(`user_${replyTo}`).emit("notification", {
+              type: "comment_reply",
+              message: `${req.user.name} replied to your comment`,
+            });
+          }
+        }
+      } catch (notifError) {
+        console.error("Failed to send reply notification:", notifError);
+      }
+    }
+
+    // Notify mentioned users
+    if (mentions && mentions.length > 0) {
+      try {
+        const mentionNotifications = mentions
+          .filter((userId) => userId.toString() !== req.user._id.toString())
+          .map((userId) => ({
+            recipient: userId,
+            sender: req.user._id,
+            type: "comment_added",
+            title: `${req.user.name} mentioned you in a comment`,
+            message: content.substring(0, 100),
+            link: getNotificationLink(postType, postId),
+          }));
+
+        if (mentionNotifications.length > 0) {
+          await Notification.insertMany(mentionNotifications);
+
+          // Emit socket events
+          if (req.app.get("io")) {
+            const io = req.app.get("io");
+            mentions.forEach((userId) => {
+              if (userId.toString() !== req.user._id.toString()) {
+                io.to(`user_${userId}`).emit("notification", {
+                  type: "mention",
+                  message: `${req.user.name} mentioned you in a comment`,
+                });
+              }
+            });
+          }
+        }
+      } catch (notifError) {
+        console.error("Failed to send mention notifications:", notifError);
+      }
+    }
+
+    res.status(201).json(comment);
+  } catch (error) {
+    console.error("[Comment Creation Error]", error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Helper function to get post owner based on post type
+async function getPostOwner(postType, postId) {
+  try {
+    let Model;
+    let ownerField = "user"; // default field name
+
+    switch (postType) {
+      case "event":
+        Model = (await import("../models/Event.js")).default;
+        break;
+      case "housing":
+        Model = (await import("../models/HousingPost.js")).default;
+        break;
+      case "buysell":
+      case "marketplace": // Support both names
+        Model = (await import("../models/BuySellPost.js")).default;
+        break;
+      case "job":
+        Model = (await import("../models/Job.js")).default;
+        ownerField = "poster";
+        break;
+      case "food":
+        Model = (await import("../models/FoodOrder.js")).default;
+        break;
+      case "lostfound":
+        Model = (await import("../models/LostFound.js")).default;
+        ownerField = "poster";
+        break;
+      case "studygroup":
+        Model = (await import("../models/StudyGroup.js")).default;
+        ownerField = "creator";
+        break;
+      case "bloodrequest":
+        Model = (await import("../models/BloodRequest.js")).default;
+        ownerField = "requester";
+        break;
+      case "bookrequest":
+        Model = (await import("../models/BookRequest.js")).default;
+        ownerField = "requester";
+        break;
+      case "post":
+        Model = (await import("../models/Post.js")).default;
+        ownerField = "author";
+        break;
+      default:
+        console.log(`[getPostOwner] Unknown post type: ${postType}`);
+        return null;
+    }
+
+    console.log(
+      `[getPostOwner] Looking for ${postType} with ID ${postId}, owner field: ${ownerField}`
+    );
+    const post = await Model.findById(postId).select(ownerField);
+
+    if (!post) {
+      console.log(`[getPostOwner] Post not found: ${postType} ${postId}`);
+      return null;
+    }
+
+    const ownerId = post[ownerField];
+    console.log(`[getPostOwner] Found owner: ${ownerId}`);
+    return ownerId;
+  } catch (error) {
+    console.error(
+      `[getPostOwner] Error getting post owner for ${postType} ${postId}:`,
+      error
+    );
+    return null;
+  }
+}
+
+export const getComments = async (req, res) => {
+  try {
+    const { postType, postId } = req.query;
+
+    // Get all comments for this post
+    const allComments = await Comment.find({
+      postType,
+      postId,
+    })
+      .populate("author", "name profilePicture")
+      .populate("replyTo", "name")
+      .populate("mentions", "name")
+      .sort({ createdAt: -1 });
+
+    // Organize comments with their replies
+    const topLevelComments = allComments.filter((c) => !c.parentComment);
+    const commentMap = {};
+
+    allComments.forEach((comment) => {
+      commentMap[comment._id] = { ...comment.toObject(), replies: [] };
+    });
+
+    allComments.forEach((comment) => {
+      if (comment.parentComment) {
+        const parent = commentMap[comment.parentComment];
+        if (parent) {
+          parent.replies.push(commentMap[comment._id]);
+        }
+      }
+    });
+
+    const result = topLevelComments.map((c) => commentMap[c._id]);
+
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const likeComment = async (req, res) => {
+  try {
+    const comment = await Comment.findById(req.params.id).populate(
+      "author",
+      "name"
+    );
+
+    if (!comment) {
+      return res.status(404).json({ message: "Comment not found" });
+    }
+
+    const isLiked = comment.likes.includes(req.user._id);
+
+    if (isLiked) {
+      comment.likes = comment.likes.filter(
+        (id) => id.toString() !== req.user._id.toString()
+      );
+    } else {
+      comment.likes.push(req.user._id);
+
+      // Notify comment author about the like (if not liking own comment)
+      if (comment.author._id.toString() !== req.user._id.toString()) {
+        try {
+          await Notification.create({
+            recipient: comment.author._id,
+            sender: req.user._id,
+            type: "like_added",
+            title: `${req.user.name} liked your comment`,
+            message: comment.content.substring(0, 100),
+            link: getNotificationLink(comment.postType, comment.postId),
+          });
+
+          // Emit socket event
+          if (req.app.get("io")) {
+            const io = req.app.get("io");
+            io.to(`user_${comment.author._id}`).emit("notification", {
+              type: "comment_like",
+              message: `${req.user.name} liked your comment`,
+            });
+          }
+        } catch (notifError) {
+          console.error("Failed to send like notification:", notifError);
+        }
+      }
+    }
+
+    await comment.save();
+    res.json({ likes: comment.likes.length, isLiked: !isLiked });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const updateComment = async (req, res) => {
+  try {
+    const { content } = req.body;
+    const comment = await Comment.findById(req.params.id);
+
+    if (!comment) {
+      return res.status(404).json({ message: "Comment not found" });
+    }
+
+    // Only owner can edit
+    if (comment.author.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: "Not authorized" });
+    }
+
+    comment.content = content;
+    comment.isEdited = true;
+    await comment.save();
+
+    await comment.populate("author", "name profilePicture");
+    await comment.populate("replyTo", "name");
+
+    res.json(comment);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const deleteComment = async (req, res) => {
+  try {
+    const comment = await Comment.findById(req.params.id);
+
+    if (!comment) {
+      return res.status(404).json({ message: "Comment not found" });
+    }
+
+    // Allow admin or owner to delete
+    const isOwner = comment.author.toString() === req.user._id.toString();
+    const isAdmin = req.user.role === "admin";
+
+    if (!isOwner && !isAdmin) {
+      return res.status(403).json({ message: "Not authorized" });
+    }
+
+    // Invalidate cache for the post type
+    const postType = comment.postType;
+    if (postType === "buysell" || postType === "marketplace") {
+      deleteCachePattern("route_/api/buysell");
+    } else if (postType === "job") {
+      deleteCachePattern("route_/api/jobs");
+    } else if (postType === "housing") {
+      deleteCachePattern("route_/api/housing");
+    } else if (postType === "lostfound") {
+      deleteCachePattern("route_/api/lost-found");
+    }
+
+    await comment.deleteOne();
+    res.json({ message: "Comment deleted" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

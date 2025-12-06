@@ -1,6 +1,7 @@
 import Event from "../models/Event.js";
 import { uploadImage } from "../services/cloudinaryService.js";
 import { createNotification } from "./notificationController.js";
+import { deleteCachePattern } from "../services/cacheService.js";
 import multer from "multer";
 
 const upload = multer({ dest: "uploads/" });
@@ -65,6 +66,9 @@ export const createEvent = [
         "user",
         "name email profilePicture department batch isStudentVerified"
       );
+
+      // Invalidate events cache
+      deleteCachePattern("route_/api/events");
 
       // Emit real-time event creation
       const io = req.app.get("io");
@@ -142,6 +146,9 @@ export const markInterested = async (req, res) => {
       "name email profilePicture department batch isStudentVerified"
     );
     await event.populate("interested", "name");
+
+    // Invalidate events cache
+    deleteCachePattern("route_/api/events");
 
     // Emit real-time interest update
     const io = req.app.get("io");
@@ -248,6 +255,9 @@ export const updateEvent = [
         "name email profilePicture department batch isStudentVerified"
       );
 
+      // Invalidate events cache
+      deleteCachePattern("route_/api/events");
+
       // Emit real-time event update
       const io = req.app.get("io");
       if (io) {
@@ -293,6 +303,9 @@ export const deleteEvent = async (req, res) => {
     }
 
     await event.deleteOne();
+
+    // Invalidate events cache
+    deleteCachePattern("route_/api/events");
 
     // Emit real-time event deletion
     const io = req.app.get("io");

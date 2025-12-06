@@ -613,13 +613,42 @@ export const getTrendingTopics = async (req, res) => {
 // Get campus stats
 export const getCampusStats = async (req, res) => {
   try {
+    // Check cache first
+    const { getCache, setCache, CACHE_KEYS, CACHE_TTL } = await import(
+      "../services/cacheService.js"
+    );
+    const cachedStats = getCache(CACHE_KEYS.CAMPUS_STATS);
+
+    if (cachedStats) {
+      return res.json(cachedStats);
+    }
+
     const today = new Date();
     today.setHours(0, 0, 0, 0);
+
+    // Total users in the system
+    const User = (await import("../models/User.js")).default;
+    const totalUsers = await User.countDocuments();
 
     // Posts today
     const postsToday = await Post.countDocuments({
       createdAt: { $gte: today },
     });
+
+    // Calculate average daily posts
+    const totalPosts = await Post.countDocuments();
+    const oldestPost = await Post.findOne().sort({ createdAt: 1 });
+    let averageDailyPosts = 0;
+
+    if (oldestPost) {
+      const daysSinceFirstPost = Math.max(
+        1,
+        Math.ceil(
+          (Date.now() - oldestPost.createdAt.getTime()) / (1000 * 60 * 60 * 24)
+        )
+      );
+      averageDailyPosts = Math.round(totalPosts / daysSinceFirstPost);
+    }
 
     // Active users (users who posted or interacted in last 24 hours)
     const oneDayAgo = new Date();
@@ -656,11 +685,18 @@ export const getCampusStats = async (req, res) => {
       // Event model might not exist
     }
 
-    res.json({
+    const stats = {
+      totalUsers,
+      averageDailyPosts,
       activeUsers,
       postsToday,
       eventsThisWeek,
-    });
+    };
+
+    // Cache for 5 minutes
+    setCache(CACHE_KEYS.CAMPUS_STATS, stats, CACHE_TTL.MEDIUM);
+
+    res.json(stats);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

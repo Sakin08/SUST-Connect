@@ -4,19 +4,45 @@ import PendingUser from "../models/PendingUser.js";
 import { generateTokens } from "../services/tokenService.js";
 import { validateEmail, validatePassword } from "../utils/validators.js";
 import { uploadImage } from "../services/cloudinaryService.js";
-// Use SMTP with port 2525 (works on Render)
 import { sendOTPEmail, sendWelcomeEmail } from "../services/emailService.js";
+import {
+  parseStudentEmail,
+  parseRegistrationNumber,
+} from "../utils/sustParser.js";
 
 // Helper function to generate 6-digit OTP
 const generateOTP = () => {
   return Math.floor(100000 + Math.random() * 900000).toString();
 };
 
-// Helper function to extract batch from registration number
-const extractBatch = (registrationNumber) => {
-  // Extract first 4 digits as batch year
-  const batch = registrationNumber.substring(0, 4);
-  return batch;
+// Helper function to extract batch and department from registration number or email
+const extractStudentInfo = (email, registrationNumber) => {
+  let parsed = null;
+
+  // Try to parse from registration number first
+  if (registrationNumber) {
+    parsed = parseRegistrationNumber(registrationNumber);
+  }
+
+  // If not valid, try to parse from email
+  if (!parsed || !parsed.isValid) {
+    parsed = parseStudentEmail(email);
+  }
+
+  if (parsed && parsed.isValid) {
+    return {
+      batch: parsed.batch,
+      department: parsed.department,
+      registrationNumber: parsed.fullRegNumber,
+    };
+  }
+
+  // Fallback to old method
+  return {
+    batch: registrationNumber ? registrationNumber.substring(0, 4) : "N/A",
+    department: null,
+    registrationNumber: registrationNumber || "N/A",
+  };
 };
 
 // Step 1: Send OTP
@@ -30,28 +56,33 @@ export const sendOTP = async (req, res) => {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    // Role-specific validation
-    if (role === "student" && !registrationNumber) {
-      return res
-        .status(400)
-        .json({ message: "Registration number is required for students" });
-    }
-
-    if ((role === "student" || role === "teacher") && !department) {
-      return res
-        .status(400)
-        .json({ message: "Department is required for students and teachers" });
-    }
-
     // Validate email format
     if (!validateEmail(email)) {
       return res.status(400).json({ message: "Invalid email format" });
     }
 
-    // Validate registration number format for students (should start with 4 digits for year)
-    if (role === "student" && !/^\d{4}/.test(registrationNumber)) {
+    // For students, validate SUST email and auto-extract info
+    if (role === "student") {
+      try {
+        const parsed = parseStudentEmail(email);
+        if (!parsed || !parsed.isValid) {
+          return res.status(400).json({
+            message:
+              "Please use your SUST student email (e.g., 2019331008@student.sust.edu)",
+          });
+        }
+      } catch (parseError) {
+        console.error("Error parsing student email:", parseError);
+        return res.status(400).json({
+          message: "Invalid email format for student registration",
+        });
+      }
+    }
+
+    // For teachers, department is required
+    if (role === "teacher" && !department) {
       return res.status(400).json({
-        message: "Invalid registration number format",
+        message: "Department is required for teachers",
       });
     }
 
@@ -63,8 +94,29 @@ export const sendOTP = async (req, res) => {
         .json({ message: "User already registered with this email" });
     }
 
-    // Extract batch from registration number (only for students)
-    const batch = role === "student" ? extractBatch(registrationNumber) : "N/A";
+    // Auto-detect batch and department from registration number or email (for students)
+    let detectedBatch = "N/A";
+    let detectedDepartment = department || "N/A";
+    let finalRegNumber = registrationNumber || "N/A";
+
+    if (role === "student") {
+      try {
+        const studentInfo = extractStudentInfo(email, registrationNumber);
+        detectedBatch = studentInfo.batch || "N/A";
+        detectedDepartment = studentInfo.department || "N/A";
+        finalRegNumber = studentInfo.registrationNumber || "N/A";
+      } catch (extractError) {
+        console.error("Error extracting student info:", extractError);
+        // Use fallback values
+        detectedBatch = "N/A";
+        detectedDepartment = "N/A";
+        finalRegNumber = "N/A";
+      }
+    } else if (role === "teacher") {
+      // Teachers don't have batch or registration number
+      detectedBatch = "N/A";
+      finalRegNumber = "N/A";
+    }
 
     // Generate OTP
     const otp = generateOTP();
@@ -74,25 +126,25 @@ export const sendOTP = async (req, res) => {
     const pendingUser = await PendingUser.findOne({ email });
 
     if (pendingUser) {
-      // Update existing pending user
+      // Update existing pending user with auto-detected values
       pendingUser.name = name;
       pendingUser.role = role;
-      pendingUser.registrationNumber = registrationNumber || "N/A";
-      pendingUser.department = department || "N/A";
-      pendingUser.batch = batch;
+      pendingUser.registrationNumber = finalRegNumber;
+      pendingUser.department = detectedDepartment || "N/A";
+      pendingUser.batch = detectedBatch;
       pendingUser.phone = phone || "";
       pendingUser.otp = otp;
       pendingUser.otpExpiry = otpExpiry;
       await pendingUser.save();
     } else {
-      // Create new pending user (NOT in main User collection)
+      // Create new pending user with auto-detected values
       await PendingUser.create({
         name,
         email,
         role,
-        registrationNumber: registrationNumber || "N/A",
-        department: department || "N/A",
-        batch,
+        registrationNumber: finalRegNumber,
+        department: detectedDepartment || "N/A",
+        batch: detectedBatch,
         phone: phone || "",
         password: "temp", // Temporary, will be replaced
         otp,
@@ -112,7 +164,7 @@ export const sendOTP = async (req, res) => {
 
     res.status(200).json({
       message: "OTP sent to your email",
-      batch,
+      batch: detectedBatch,
       email,
     });
   } catch (error) {

@@ -14,7 +14,6 @@ export const getActiveSchedule = async (req, res) => {
   }
 };
 
-
 // Upload new bus schedule (admin only)
 export const uploadSchedule = async (req, res) => {
   try {

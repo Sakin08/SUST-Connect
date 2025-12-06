@@ -241,7 +241,22 @@ export const getBloodRequests = async (req, res) => {
       .populate("responses.donor", "name profilePicture")
       .sort({ urgency: -1, createdAt: -1 });
 
-    res.json(requests);
+    // Add comment counts
+    const Comment = (await import("../models/Comment.js")).default;
+    const requestsWithComments = await Promise.all(
+      requests.map(async (request) => {
+        const commentCount = await Comment.countDocuments({
+          postType: "bloodrequest",
+          postId: request._id,
+        });
+        return {
+          ...request.toObject(),
+          commentCount,
+        };
+      })
+    );
+
+    res.json(requestsWithComments);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -258,7 +273,17 @@ export const getBloodRequestById = async (req, res) => {
       return res.status(404).json({ message: "Blood request not found" });
     }
 
-    res.json(request);
+    // Add comment count
+    const Comment = (await import("../models/Comment.js")).default;
+    const commentCount = await Comment.countDocuments({
+      postType: "bloodrequest",
+      postId: request._id,
+    });
+
+    res.json({
+      ...request.toObject(),
+      commentCount,
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

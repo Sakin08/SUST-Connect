@@ -1,5 +1,6 @@
 import BuySellPost from "../models/BuySellPost.js";
 import { uploadImage } from "../services/cloudinaryService.js";
+import { deleteCachePattern } from "../services/cacheService.js";
 import multer from "multer";
 
 const upload = multer({ dest: "uploads/" });
@@ -35,6 +36,9 @@ export const createPost = [
         "name email phone profilePicture department batch isStudentVerified"
       );
 
+      // Invalidate buysell cache
+      deleteCachePattern("route_/api/buysell");
+
       res.status(201).json(post);
     } catch (error) {
       res.status(500).json({ message: error.message });
@@ -43,11 +47,33 @@ export const createPost = [
 ];
 
 export const getPosts = async (req, res) => {
-  const posts = await BuySellPost.find().populate(
-    "user",
-    "name email phone profilePicture department batch isStudentVerified"
-  );
-  res.json(posts);
+  try {
+    const posts = await BuySellPost.find()
+      .populate(
+        "user",
+        "name email phone profilePicture department batch isStudentVerified"
+      )
+      .sort({ createdAt: -1 });
+
+    // Add comment count to each post
+    const Comment = (await import("../models/Comment.js")).default;
+    const postsWithComments = await Promise.all(
+      posts.map(async (post) => {
+        const commentCount = await Comment.countDocuments({
+          postId: post._id,
+          postType: "buysell",
+        });
+        return {
+          ...post.toObject(),
+          commentCount,
+        };
+      })
+    );
+
+    res.json(postsWithComments);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
 
 export const getPost = async (req, res) => {
@@ -117,6 +143,9 @@ export const updatePost = [
         "name email phone profilePicture department batch isStudentVerified"
       );
 
+      // Invalidate buysell cache
+      deleteCachePattern("route_/api/buysell");
+
       res.json(post);
     } catch (error) {
       console.error("Update error:", error);
@@ -148,6 +177,10 @@ export const deletePost = async (req, res) => {
     }
 
     await post.deleteOne();
+
+    // Invalidate buysell cache
+    deleteCachePattern("route_/api/buysell");
+
     res.json({ message: "Post deleted" });
   } catch (error) {
     console.error("Delete error:", error);

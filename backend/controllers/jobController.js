@@ -74,7 +74,23 @@ export const getJobs = async (req, res) => {
         "name email profilePicture department batch isStudentVerified"
       )
       .sort({ createdAt: -1 });
-    res.json(jobs);
+
+    // Add comment count to each job
+    const Comment = (await import("../models/Comment.js")).default;
+    const jobsWithComments = await Promise.all(
+      jobs.map(async (job) => {
+        const commentCount = await Comment.countDocuments({
+          postId: job._id,
+          postType: "job",
+        });
+        return {
+          ...job.toObject(),
+          commentCount,
+        };
+      })
+    );
+
+    res.json(jobsWithComments);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

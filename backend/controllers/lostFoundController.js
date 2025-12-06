@@ -111,7 +111,22 @@ export const getLostFoundItems = async (req, res) => {
       )
       .sort({ createdAt: -1 });
 
-    res.json(items);
+    // Add comment count to each item
+    const Comment = (await import("../models/Comment.js")).default;
+    const itemsWithComments = await Promise.all(
+      items.map(async (item) => {
+        const commentCount = await Comment.countDocuments({
+          postId: item._id,
+          postType: "lostfound",
+        });
+        return {
+          ...item.toObject(),
+          commentCount,
+        };
+      })
+    );
+
+    res.json(itemsWithComments);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
