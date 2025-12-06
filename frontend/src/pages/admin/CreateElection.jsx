@@ -94,6 +94,15 @@ const CreateElection = () => {
             return;
         }
 
+        // For society elections, check if position name is filled
+        if (formData.type === 'society') {
+            const selectedPosition = positions[candidateForm.positionIndex];
+            if (!selectedPosition || !selectedPosition.positionName.trim()) {
+                alert('Please fill in the position name before adding candidates');
+                return;
+            }
+        }
+
         // Check for duplicates
         const isDuplicate = candidates.some(c =>
             c.registrationNumber === candidateForm.registrationNumber.trim()
@@ -107,14 +116,18 @@ const CreateElection = () => {
         const newCandidate = {
             ...candidateForm,
             id: Date.now(),
-            positionName: formData.type === 'cr' ? 'CR' : (positions[candidateForm.positionIndex]?.positionName || 'Position')
+            positionName: formData.type === 'cr' ? 'CR' : (positions[candidateForm.positionIndex]?.positionName || 'Position'),
+            positionIndex: candidateForm.positionIndex // Store the index for reference
         };
 
+        console.log('Adding candidate:', newCandidate); // Debug log
+
         setCandidates([...candidates, newCandidate]);
+        // Keep the same position selected, only clear registration and manifesto
         setCandidateForm({
             registrationNumber: '',
             manifesto: '',
-            positionIndex: 0
+            positionIndex: candidateForm.positionIndex // Keep the same position
         });
     };
 
@@ -183,18 +196,23 @@ const CreateElection = () => {
 
                 const failedCandidates = [];
 
+                console.log('=== ADDING CANDIDATES ===');
+                console.log('Created positions:', createdPositions);
+                console.log('Candidates to add:', candidates);
+
                 for (const candidate of candidates) {
                     try {
-                        // Find the position ID based on position name
+                        // Find the position ID based on position name (exact match, case-sensitive)
                         const position = createdPositions.find(p =>
-                            p.positionName === candidate.positionName
+                            p.positionName.trim() === candidate.positionName.trim()
                         );
 
                         if (position) {
-                            console.log('Adding candidate:', {
-                                electionId,
-                                positionId: position._id,
-                                registrationNumber: candidate.registrationNumber
+                            console.log('✅ Position found for candidate:', {
+                                candidateRegNo: candidate.registrationNumber,
+                                candidatePosition: candidate.positionName,
+                                matchedPosition: position.positionName,
+                                positionId: position._id
                             });
 
                             await electionsApi.addCandidate({
@@ -206,11 +224,15 @@ const CreateElection = () => {
                             successCount++;
                             console.log('✅ Successfully added:', candidate.registrationNumber);
                         } else {
-                            console.error('❌ Position not found for candidate:', candidate);
+                            console.error('❌ Position not found for candidate:', {
+                                candidateRegNo: candidate.registrationNumber,
+                                candidatePosition: candidate.positionName,
+                                availablePositions: createdPositions.map(p => p.positionName)
+                            });
                             failCount++;
                             failedCandidates.push({
                                 regNo: candidate.registrationNumber,
-                                reason: 'Position not found'
+                                reason: `Position "${candidate.positionName}" not found`
                             });
                         }
                     } catch (err) {
@@ -529,7 +551,11 @@ const CreateElection = () => {
                                     {formData.type === 'society' && (
                                         <select
                                             value={candidateForm.positionIndex}
-                                            onChange={(e) => setCandidateForm({ ...candidateForm, positionIndex: parseInt(e.target.value) })}
+                                            onChange={(e) => {
+                                                const newIndex = parseInt(e.target.value);
+                                                console.log('Position selected:', newIndex, positions[newIndex]?.positionName);
+                                                setCandidateForm({ ...candidateForm, positionIndex: newIndex });
+                                            }}
                                             className="flex-1 px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                                         >
                                             {positions.map((pos, idx) => (

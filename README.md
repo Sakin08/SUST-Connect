@@ -4,14 +4,22 @@
 
 ### Your Complete Campus Companion
 
+<<<<<<< Updated upstream
 [![Live Demo](https://img.shields.io/badge/demo-live-success?style=for-the-badge)](https://sust-connect-eta.vercel.app/)
+=======
+[![Live Demo](https://img.shields.io/badge/demo-live-success?style=for-the-badge)](https://sust-connect-silk.vercel.app)
+>>>>>>> Stashed changes
 [![License](https://img.shields.io/badge/license-MIT-blue?style=for-the-badge)](LICENSE)
 [![Node](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen?style=for-the-badge&logo=node.js)](https://nodejs.org)
 [![React](https://img.shields.io/badge/react-19.2.0-61dafb?style=for-the-badge&logo=react)](https://react.dev)
 
 **A comprehensive social networking and campus management platform for Shahjalal University of Science and Technology (SUST)**
 
+<<<<<<< Updated upstream
 [Features](#-features) • [Demo](#-demo) • [Installation](#-installation) • [Tech Stack](#-tech-stack) 
+=======
+[Features](#-features) • [Demo](#-demo) • [Installation](#-installation) • [Tech Stack](#-tech-stack) • [Documentation](#-documentation)
+>>>>>>> Stashed changes
 
 </div>
 
@@ -119,6 +127,7 @@ SUST Connect is a full-stack web application designed to revolutionize campus li
 
 ### 🌐 Live Application
 
+<<<<<<< Updated upstream
 **Frontend**: [SUST-Connect](https://sust-connect-eta.vercel.app/)  
 **Backend API**: Deployed on Render
 
@@ -156,6 +165,33 @@ SUST Connect is a full-stack web application designed to revolutionize campus li
 
 
 
+=======
+**Frontend**: [https://sust-connect-silk.vercel.app](https://sust-connect-silk.vercel.app)  
+**Backend API**: Deployed on Render
+
+### 📸 Screenshots
+
+<details>
+<summary>Click to view screenshots</summary>
+
+#### Home Page
+
+![Home Page](screenshots/home.png)
+
+#### Newsfeed
+
+![Newsfeed](screenshots/newsfeed.png)
+
+#### Messaging
+
+![Messaging](screenshots/messages.png)
+
+#### Marketplace
+
+![Marketplace](screenshots/marketplace.png)
+
+</details>
+>>>>>>> Stashed changes
 
 ---
 
@@ -324,6 +360,46 @@ sust-connect/
 
 ---
 
+<<<<<<< Updated upstream
+=======
+## 🔌 API Endpoints
+
+### Core Endpoints
+
+```
+Authentication
+POST   /api/auth/register
+POST   /api/auth/login
+POST   /api/auth/logout
+GET    /api/auth/me
+
+Users
+GET    /api/users
+GET    /api/users/:id
+PUT    /api/users/:id
+POST   /api/users/:id/follow
+
+Posts
+GET    /api/posts
+POST   /api/posts
+POST   /api/posts/:id/like
+POST   /api/posts/:id/comment
+
+Events
+GET    /api/events
+POST   /api/events
+POST   /api/events/:id/interested
+
+Messaging
+GET    /api/chat/conversations
+GET    /api/chat/messages/:userId
+POST   /api/chat/messages
+
+... and 200+ more endpoints
+```
+
+See [PROJECT_DOCUMENTATION.md](PROJECT_DOCUMENTATION.md) for complete API reference.
+>>>>>>> Stashed changes
 
 ---
 
@@ -357,7 +433,11 @@ vercel --prod
 
 ### Environment Variables
 
+<<<<<<< Updated upstream
 
+=======
+See [PROJECT_DOCUMENTATION.md](PROJECT_DOCUMENTATION.md) for complete list.
+>>>>>>> Stashed changes
 
 ---
 
@@ -378,7 +458,16 @@ npm run test:e2e
 
 ---
 
+<<<<<<< Updated upstream
 
+=======
+## 📚 Documentation
+
+- **[Complete Documentation](PROJECT_DOCUMENTATION.md)** - Comprehensive A-Z guide
+- **[API Reference](PROJECT_DOCUMENTATION.md#7-api-endpoints)** - All endpoints
+- **[Database Models](PROJECT_DOCUMENTATION.md#6-database-models)** - Schema details
+- **[Security Guide](PROJECT_DOCUMENTATION.md#15-security-features)** - Security practices
+>>>>>>> Stashed changes
 
 ---
 
@@ -401,6 +490,16 @@ Contributions are welcome! Please follow these steps:
 
 ---
 
+<<<<<<< Updated upstream
+=======
+## 🐛 Known Issues
+
+- [ ] Mobile responsiveness needs improvement
+- [ ] Image upload size optimization needed
+- [ ] Search functionality can be enhanced
+
+See [Issues](https://github.com/yourusername/sust-connect/issues) for more.
+>>>>>>> Stashed changes
 
 ---
 
@@ -427,6 +526,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 **SUST Connect Development Team**
 
+<<<<<<< Updated upstream
 
 - GitHub: [@sakin08](https://github.com/sakin08) – Sr Sakin 
 - GitHub: [@arif-bepari](https://github.com/arif-bepari) – Arif 
@@ -436,6 +536,10 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Email: 2021331003@student.sust.edu 
 - Email: 2021331064@student.sust.edu
 
+=======
+- GitHub: [@yourusername](https://github.com/yourusername)
+- Email: contact@sustconnect.com
+>>>>>>> Stashed changes
 
 ---
 
@@ -449,9 +553,15 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Support
 
+<<<<<<< Updated upstream
 - 📧 Email: teamsustconnect@gmail.com
 - 🐛 Issues: [GitHub Issues](https://github.com/sakin08/sust-connect/issues)
 - 💬 Discussions: [GitHub Discussions](https://github.com/sakin08/sust-connect/discussions)
+=======
+- 📧 Email: support@sustconnect.com
+- 🐛 Issues: [GitHub Issues](https://github.com/yourusername/sust-connect/issues)
+- 💬 Discussions: [GitHub Discussions](https://github.com/yourusername/sust-connect/discussions)
+>>>>>>> Stashed changes
 
 ---
 
