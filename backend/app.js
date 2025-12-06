@@ -30,6 +30,8 @@ import holidayRoutes from "./routes/holidayRoutes.js";
 import busScheduleRoutes from "./routes/busScheduleRoutes.js";
 import bookRequestRoutes from "./routes/bookRequestRoutes.js";
 import contactRoutes from "./routes/contactRoutes.js";
+import electionRoutes from "./routes/electionRoutes.js";
+import electionRequestRoutes from "./routes/electionRequestRoutes.js";
 
 const app = express();
 
@@ -99,6 +101,8 @@ app.use("/api/holidays", holidayRoutes);
 app.use("/api/bus-schedule", busScheduleRoutes);
 app.use("/api/book-requests", bookRequestRoutes);
 app.use("/api/contact", contactRoutes);
+app.use("/api/elections", electionRoutes);
+app.use("/api/election-requests", electionRequestRoutes);
 
 app.use(errorHandler);
 
