@@ -47,7 +47,10 @@ import AddMenuItem from './pages/AddMenuItem.jsx';
 import AdminPanel from './pages/AdminPanel.jsx';
 import AdminDashboard from './pages/AdminDashboard.jsx';
 import ContentManager from './pages/admin/ContentManager.jsx';
+<<<<<<< HEAD
 import ReportsManager from './pages/admin/ReportsManager.jsx';
+=======
+>>>>>>> 2adefe83f039148c39af4fc7269c7c5f620bfec9
 import HolidayCalendar from './pages/HolidayCalendar.jsx';
 import BusSchedule from './pages/BusSchedule.jsx';
 import LostFound from './pages/LostFound.jsx';
@@ -58,6 +61,7 @@ import BloodDonation from './pages/BloodDonation.jsx';
 import RegisterDonor from './pages/RegisterDonor.jsx';
 import Notifications from './pages/Notifications.jsx';
 import CreateBloodRequest from './pages/CreateBloodRequest.jsx';
+<<<<<<< HEAD
 import Elections from './pages/Elections.jsx';
 import ElectionDetails from './pages/ElectionDetails.jsx';
 import ElectionResults from './pages/ElectionResults.jsx';
@@ -70,6 +74,11 @@ import Newsfeed from './pages/Newsfeed.jsx';
 import Books from './pages/Books.jsx';
 import CreateBookRequest from './pages/CreateBookRequest.jsx';
 import BookRequestDetails from './pages/BookRequestDetails.jsx';
+=======
+import BloodRequestDetails from './pages/BloodRequestDetails.jsx';
+import EditDonorProfile from './pages/EditDonorProfile.jsx';
+import Newsfeed from './pages/Newsfeed.jsx';
+>>>>>>> 2adefe83f039148c39af4fc7269c7c5f620bfec9
 import SavedPosts from './pages/SavedPosts.jsx';
 import PostDetail from './pages/PostDetail.jsx';
 import About from './pages/About.jsx';
@@ -136,7 +145,10 @@ function AppContent() {
         <Route path="/admin" element={<ProtectedRoute><AdminPanel /></ProtectedRoute>} />
         <Route path="/admin/dashboard" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
         <Route path="/admin/content/:type" element={<ProtectedRoute><ContentManager /></ProtectedRoute>} />
+<<<<<<< HEAD
         <Route path="/admin/reports" element={<ProtectedRoute><ReportsManager /></ProtectedRoute>} />
+=======
+>>>>>>> 2adefe83f039148c39af4fc7269c7c5f620bfec9
         <Route path="/holidays" element={<HolidayCalendar />} />
         <Route path="/bus-schedule" element={<BusSchedule />} />
         <Route path="/lost-found" element={<LostFound />} />
@@ -144,6 +156,7 @@ function AppContent() {
         <Route path="/lost-found/edit/:id" element={<ProtectedRoute><EditLostFound /></ProtectedRoute>} />
         <Route path="/lost-found/:id" element={<LostFoundDetails />} />
         <Route path="/blood-donation" element={<BloodDonation />} />
+<<<<<<< HEAD
 
         <Route path="/elections" element={<Elections />} />
         <Route path="/elections/:id" element={<ProtectedRoute><ElectionDetails /></ProtectedRoute>} />
@@ -151,13 +164,18 @@ function AppContent() {
         <Route path="/admin/elections/create" element={<ProtectedRoute><CreateElection /></ProtectedRoute>} />
         <Route path="/admin/elections/requests" element={<ProtectedRoute><ElectionRequests /></ProtectedRoute>} />
         <Route path="/elections/request" element={<ProtectedRoute><RequestElection /></ProtectedRoute>} />
+=======
+>>>>>>> 2adefe83f039148c39af4fc7269c7c5f620bfec9
         <Route path="/blood-donation/register" element={<ProtectedRoute><RegisterDonor /></ProtectedRoute>} />
         <Route path="/blood-donation/request" element={<ProtectedRoute><CreateBloodRequest /></ProtectedRoute>} />
         <Route path="/blood-donation/request/:id" element={<BloodRequestDetails />} />
         <Route path="/blood-donation/edit" element={<ProtectedRoute><EditDonorProfile /></ProtectedRoute>} />
+<<<<<<< HEAD
         <Route path="/books" element={<ProtectedRoute><Books /></ProtectedRoute>} />
         <Route path="/books/create" element={<ProtectedRoute><CreateBookRequest /></ProtectedRoute>} />
         <Route path="/books/:id" element={<ProtectedRoute><BookRequestDetails /></ProtectedRoute>} />
+=======
+>>>>>>> 2adefe83f039148c39af4fc7269c7c5f620bfec9
         <Route path="/about" element={<About />} />
         <Route path="/privacy" element={<PrivacyPolicy />} />
         <Route path="/terms" element={<TermsOfService />} />

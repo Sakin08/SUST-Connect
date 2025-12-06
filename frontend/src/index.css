@@ -266,6 +266,7 @@ tification Animations */
 .scrollbar-track-transparent::-webkit-scrollbar-track {
   background: transparent;
 }
+<<<<<<< HEAD
 
 /* Subtle zoom animation for hero background */
 @keyframes slow-zoom {
@@ -295,3 +296,5 @@ tification Animations */
 .border-3 {
   border-width: 3px;
 }
+=======
+>>>>>>> 2adefe83f039148c39af4fc7269c7c5f620bfec9

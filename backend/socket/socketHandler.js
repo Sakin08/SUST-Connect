@@ -142,3 +142,11 @@ export const getOnlineUsers = () => Array.from(onlineUsers.keys());
 export const emitEventUpdate = (io, eventType, eventData) => {
   io.to("events").emit("eventUpdate", { type: eventType, data: eventData });
 };
+
+// Helper function to emit notifications to specific user
+export const emitNotification = (io, userId, notification) => {
+  const userSocketId = onlineUsers.get(userId.toString());
+  if (userSocketId) {
+    io.to(userSocketId).emit("newNotification", notification);
+  }
+};
