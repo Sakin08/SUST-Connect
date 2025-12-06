@@ -1,23 +1,54 @@
 import { useState } from 'react';
-import { Mail, Phone, MapPin, Send } from 'lucide-react';
-//contact
+import { Mail, Phone, MapPin, Send, Loader2, CheckCircle } from 'lucide-react';
+import { submitContactForm } from '../api/contact';
+import { useToast } from '../context/ToastContext';
+import { useAuth } from '../context/AuthContext';
+
 const Contact = () => {
+    const { user } = useAuth();
+    const toast = useToast();
     const [formData, setFormData] = useState({
-        name: '',
-        email: '',
+        name: user?.name || '',
+        email: user?.email || '',
         subject: '',
         message: ''
     });
+    const [loading, setLoading] = useState(false);
     const [submitted, setSubmitted] = useState(false);
+    const [error, setError] = useState('');
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('Form submitted:', formData);
-        setSubmitted(true);
-        setTimeout(() => {
-            setSubmitted(false);
-            setFormData({ name: '', email: '', subject: '', message: '' });
-        }, 3000);
+        setLoading(true);
+        setError('');
+
+        try {
+            await submitContactForm(formData);
+            setSubmitted(true);
+            if (toast?.showToast) {
+                toast.showToast('Message sent successfully! We\'ll get back to you soon.', 'success');
+            }
+
+            // Reset form after 2 seconds
+            setTimeout(() => {
+                setSubmitted(false);
+                setFormData({
+                    name: user?.name || '',
+                    email: user?.email || '',
+                    subject: '',
+                    message: ''
+                });
+            }, 2000);
+        } catch (err) {
+            console.error('Contact form error:', err);
+            const errorMessage = err.response?.data?.message || 'Failed to send message. Please try again.';
+            setError(errorMessage);
+            if (toast?.showToast) {
+                toast.showToast(errorMessage, 'error');
+            }
+        } finally {
+            setLoading(false);
+        }
     };
 
     const handleChange = (e) => {
@@ -41,10 +72,17 @@ const Contact = () => {
                     <div className="grid md:grid-cols-2 gap-8">
                         <div className="bg-white rounded-lg shadow-lg p-8">
                             <h2 className="text-2xl font-bold text-gray-900 mb-6">Send us a message</h2>
-                            
-                            {submitted && (//notification message
-                                <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg text-green-800">
-                                    Thank you! Your message has been sent successfully.
+
+                            {submitted && (
+                                <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg text-green-800 flex items-center gap-2">
+                                    <CheckCircle className="w-5 h-5" />
+                                    <span>Thank you! Your message has been sent successfully.</span>
+                                </div>
+                            )}
+
+                            {error && (
+                                <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-800">
+                                    {error}
                                 </div>
                             )}
 
@@ -103,10 +141,25 @@ const Contact = () => {
 
                                 <button
                                     type="submit"
-                                    className="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 transition flex items-center justify-center gap-2"
+                                    disabled={loading || submitted}
+                                    className="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
-                                    <Send className="w-5 h-5" />
-                                    Send Message
+                                    {loading ? (
+                                        <>
+                                            <Loader2 className="w-5 h-5 animate-spin" />
+                                            Sending...
+                                        </>
+                                    ) : submitted ? (
+                                        <>
+                                            <CheckCircle className="w-5 h-5" />
+                                            Sent!
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Send className="w-5 h-5" />
+                                            Send Message
+                                        </>
+                                    )}
                                 </button>
                             </form>
                         </div>
@@ -114,7 +167,7 @@ const Contact = () => {
                         <div className="space-y-6">
                             <div className="bg-white rounded-lg shadow-lg p-8">
                                 <h2 className="text-2xl font-bold text-gray-900 mb-6">Get in Touch</h2>
-                                
+
                                 <div className="space-y-6">
                                     <div className="flex items-start gap-4">
                                         <div className="bg-indigo-100 p-3 rounded-lg">
@@ -122,7 +175,7 @@ const Contact = () => {
                                         </div>
                                         <div>
                                             <h3 className="font-semibold text-gray-900 mb-1">Email</h3>
-                                            <p className="text-gray-600">support@sustconnect.edu</p>
+                                            <p className="text-gray-600">www.mdsrsakin2001@gmail.com</p>
                                         </div>
                                     </div>
 
@@ -132,7 +185,7 @@ const Contact = () => {
                                         </div>
                                         <div>
                                             <h3 className="font-semibold text-gray-900 mb-1">Phone</h3>
-                                            <p className="text-gray-600">+880 821-713491</p>
+                                            <p className="text-gray-600">+8801823024067</p>
                                         </div>
                                     </div>
 

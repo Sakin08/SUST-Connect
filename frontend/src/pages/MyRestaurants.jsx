@@ -44,7 +44,7 @@ const MyRestaurants = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 py-10">
+        <div className="min-h-screen bg-gradient-to-br from-gray-700 via-slate-700 to-gray-600 py-10">
             <div className="container mx-auto px-4 max-w-6xl">
                 <div className="flex justify-between items-center mb-8">
                     <div>

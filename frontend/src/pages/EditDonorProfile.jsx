@@ -123,7 +123,7 @@ const EditDonorProfile = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-pink-50 py-12">
+        <div className="min-h-screen bg-gradient-to-br from-gray-700 via-slate-700 to-gray-600 py-12">
             <div className="container mx-auto px-6 max-w-2xl">
                 <div className="bg-white rounded-2xl shadow-xl p-8">
                     <h1 className="text-3xl font-bold text-gray-900 mb-2">✏️ Edit Donor Profile</h1>

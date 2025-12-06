@@ -37,7 +37,7 @@ const Calendar = () => {
             console.error('Failed to load calendar data:', err);
         }
     };
-// month
+
     const getDaysInMonth = (date) => {
         const year = date.getFullYear();
         const month = date.getMonth();

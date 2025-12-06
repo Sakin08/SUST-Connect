@@ -122,17 +122,17 @@ const Restaurants = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-red-50 py-10">
+        <div className="min-h-screen bg-gradient-to-br from-gray-700 via-slate-700 to-gray-600 py-10">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
 
                 {/* Header */}
                 <header className="pb-6 border-b border-gray-200 mb-8">
                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
                         <div>
-                            <h1 className="text-4xl font-extrabold text-gray-900 tracking-tight mb-2">
+                            <h1 className="text-4xl font-extrabold bg-gradient-to-r from-orange-400 via-amber-400 to-yellow-400 bg-clip-text text-transparent tracking-tight mb-2">
                                 🍔 Campus Eats
                             </h1>
-                            <p className="text-gray-600">Order food from your favorite campus restaurants</p>
+                            <p className="text-amber-200">Order food from your favorite campus restaurants</p>
                         </div>
                         {user && (
                             <Link
@@ -146,42 +146,42 @@ const Restaurants = () => {
                     </div>
                 </header>
 
-                {/* Search and Filter Section */}
-                <div className="bg-white rounded-xl shadow-md p-6 mb-8">
-                    <div className="flex flex-col sm:flex-row gap-4 mb-4">
+                {/* Search and Filter Section - Dark Theme & Compact */}
+                <div className="bg-gray-800/90 backdrop-blur-sm rounded-lg shadow-lg p-3 mb-6 border border-gray-700/50">
+                    <div className="flex flex-col sm:flex-row gap-2 mb-2">
                         <div className="flex-1 relative">
-                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                            <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                             <input
                                 type="text"
-                                placeholder="Search restaurants, location, or cuisine..."
+                                placeholder="Search restaurants..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                                className="w-full pl-8 pr-3 py-2 text-sm bg-gray-700/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent text-white placeholder-gray-400"
                             />
                         </div>
                         <button
                             onClick={() => setShowFilters(!showFilters)}
-                            className={`flex items-center justify-center px-6 py-3 rounded-lg font-semibold transition ${showFilters
+                            className={`flex items-center justify-center px-4 py-2 rounded-lg font-semibold transition text-sm ${showFilters
                                 ? 'bg-orange-600 text-white'
-                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
                                 }`}
                         >
-                            <Filter className="w-5 h-5 mr-2" />
+                            <Filter className="w-4 h-4 mr-1.5" />
                             Filters
                         </button>
                     </div>
 
                     {/* Filter Options */}
                     {showFilters && (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-gray-200">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2 border-t border-gray-700">
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                <label className="block text-xs font-semibold text-gray-300 mb-1">
                                     Shop Type
                                 </label>
                                 <select
                                     value={shopTypeFilter}
                                     onChange={(e) => setShopTypeFilter(e.target.value)}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500"
+                                    className="w-full px-2 py-1.5 text-sm bg-gray-700/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 text-white"
                                 >
                                     <option value="all">All Types</option>
                                     <option value="restaurant">Restaurant</option>
@@ -194,13 +194,13 @@ const Restaurants = () => {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                <label className="block text-xs font-semibold text-gray-300 mb-1">
                                     Status
                                 </label>
                                 <select
                                     value={isOpenFilter}
                                     onChange={(e) => setIsOpenFilter(e.target.value)}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500"
+                                    className="w-full px-2 py-1.5 text-sm bg-gray-700/50 border border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 text-white"
                                 >
                                     <option value="all">All</option>
                                     <option value="open">Open Now</option>
@@ -212,24 +212,24 @@ const Restaurants = () => {
 
                     {/* Active Filters */}
                     {(searchTerm || shopTypeFilter !== 'all' || isOpenFilter !== 'all') && (
-                        <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t border-gray-200">
-                            <span className="text-sm font-medium text-gray-600">Active Filters:</span>
+                        <div className="flex flex-wrap gap-2 mt-2 pt-2 border-t border-gray-700">
+                            <span className="text-xs font-semibold text-gray-400">Active:</span>
                             {searchTerm && (
-                                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-orange-100 text-orange-800">
+                                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-orange-600/20 text-orange-300 border border-orange-500/30">
                                     Search: {searchTerm}
-                                    <X className="w-4 h-4 ml-2 cursor-pointer" onClick={() => setSearchTerm('')} />
+                                    <X className="w-3 h-3 ml-1.5 cursor-pointer hover:text-orange-200" onClick={() => setSearchTerm('')} />
                                 </span>
                             )}
                             {shopTypeFilter !== 'all' && (
-                                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-orange-100 text-orange-800">
+                                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-orange-600/20 text-orange-300 border border-orange-500/30">
                                     {shopTypeFilter}
-                                    <X className="w-4 h-4 ml-2 cursor-pointer" onClick={() => setShopTypeFilter('all')} />
+                                    <X className="w-3 h-3 ml-1.5 cursor-pointer hover:text-orange-200" onClick={() => setShopTypeFilter('all')} />
                                 </span>
                             )}
                             {isOpenFilter !== 'all' && (
-                                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-orange-100 text-orange-800">
+                                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-orange-600/20 text-orange-300 border border-orange-500/30">
                                     {isOpenFilter}
-                                    <X className="w-4 h-4 ml-2 cursor-pointer" onClick={() => setIsOpenFilter('all')} />
+                                    <X className="w-3 h-3 ml-1.5 cursor-pointer hover:text-orange-200" onClick={() => setIsOpenFilter('all')} />
                                 </span>
                             )}
                             <button
@@ -238,7 +238,7 @@ const Restaurants = () => {
                                     setShopTypeFilter('all');
                                     setIsOpenFilter('all');
                                 }}
-                                className="text-sm text-red-600 hover:text-red-800 font-medium"
+                                className="text-xs text-red-400 hover:text-red-300 font-semibold"
                             >
                                 Clear All
                             </button>
@@ -264,85 +264,100 @@ const Restaurants = () => {
                             const ShopIcon = getShopIcon(restaurant.shopType);
                             const showDelete = canDelete(user, restaurant.owner);
                             return (
-                                <div key={restaurant._id} className="relative">
+                                <div key={restaurant._id} className="relative h-full">
                                     <Link
                                         to={`/restaurants/${restaurant._id}`}
-                                        className="block bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group"
+                                        className="flex flex-col h-full bg-gray-800/90 backdrop-blur-sm rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden group border border-gray-700/50 hover:border-orange-500/50 hover:-translate-y-1"
                                     >
                                         {/* Cover Image */}
                                         {restaurant.coverImage ? (
-                                            <div className="h-48 overflow-hidden">
+                                            <div className="h-52 overflow-hidden relative">
                                                 <img
                                                     src={restaurant.coverImage}
                                                     alt={restaurant.name}
-                                                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                                                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                                                 />
+                                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
                                             </div>
                                         ) : (
-                                            <div className="h-48 bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center">
-                                                <ShopIcon className="w-20 h-20 text-white opacity-50" />
+                                            <div className="h-52 bg-gradient-to-br from-orange-500 via-red-500 to-pink-600 flex items-center justify-center relative overflow-hidden">
+                                                <div className="absolute inset-0 bg-black/20"></div>
+                                                <ShopIcon className="w-24 h-24 text-white/30 relative z-10" />
                                             </div>
                                         )}
 
-                                        <div className="p-5">
-                                            {/* Shop Type Badge & Status */}
-                                            <div className="flex items-center justify-between mb-3">
-                                                <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${getShopColor(restaurant.shopType)}`}>
-                                                    <ShopIcon className="w-3 h-3 mr-1" />
+                                        {/* Floating Status Badge */}
+                                        <div className="absolute top-3 right-3 z-10">
+                                            {restaurant.isOpen ? (
+                                                <span className="flex items-center gap-1.5 text-xs font-bold text-white bg-green-600 px-3 py-1.5 rounded-full shadow-lg backdrop-blur-sm">
+                                                    <span className="w-2 h-2 bg-white rounded-full animate-pulse"></span>
+                                                    OPEN
+                                                </span>
+                                            ) : (
+                                                <span className="flex items-center gap-1.5 text-xs font-bold text-white bg-red-600 px-3 py-1.5 rounded-full shadow-lg backdrop-blur-sm">
+                                                    <span className="w-2 h-2 bg-white rounded-full"></span>
+                                                    CLOSED
+                                                </span>
+                                            )}
+                                        </div>
+
+                                        <div className="p-5 flex-1 flex flex-col">
+                                            {/* Shop Type Badge */}
+                                            <div className="mb-3">
+                                                <span className={`inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-bold border-2 ${getShopColor(restaurant.shopType)}`}>
+                                                    <ShopIcon className="w-4 h-4 mr-1.5" />
                                                     {restaurant.shopType.replace('-', ' ').toUpperCase()}
                                                 </span>
-                                                {restaurant.isOpen ? (
-                                                    <span className="text-xs font-semibold text-green-600 bg-green-50 px-2 py-1 rounded-full">
-                                                        ● OPEN
-                                                    </span>
-                                                ) : (
-                                                    <span className="text-xs font-semibold text-red-600 bg-red-50 px-2 py-1 rounded-full">
-                                                        ● CLOSED
-                                                    </span>
-                                                )}
                                             </div>
 
                                             {/* Restaurant Name */}
-                                            <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-orange-600 transition">
+                                            <h3 className="text-2xl font-black text-white mb-2 group-hover:text-orange-400 transition leading-tight">
                                                 {restaurant.name}
                                             </h3>
 
                                             {/* Description */}
-                                            {restaurant.description && (
-                                                <p className="text-sm text-gray-600 mb-3 line-clamp-2">
-                                                    {restaurant.description}
-                                                </p>
-                                            )}
-
-                                            {/* Location */}
-                                            <div className="flex items-center text-gray-600 text-sm mb-2">
-                                                <MapPin className="w-4 h-4 mr-1 flex-shrink-0" />
-                                                <span className="truncate">{restaurant.location}</span>
+                                            <div className="mb-3 flex-1">
+                                                {restaurant.description && (
+                                                    <p className="text-sm text-gray-300 line-clamp-2 leading-relaxed">
+                                                        {restaurant.description}
+                                                    </p>
+                                                )}
                                             </div>
 
-                                            {/* Timing */}
-                                            {restaurant.openingTime && restaurant.closingTime && (
-                                                <div className="flex items-center text-gray-600 text-sm mb-3">
-                                                    <Clock className="w-4 h-4 mr-1 flex-shrink-0" />
-                                                    {restaurant.openingTime} - {restaurant.closingTime}
+                                            {/* Location & Timing */}
+                                            <div className="space-y-2 mb-4">
+                                                <div className="flex items-center text-gray-300 text-sm">
+                                                    <div className="p-1.5 bg-orange-600/20 rounded-lg mr-2">
+                                                        <MapPin className="w-4 h-4 text-orange-400" />
+                                                    </div>
+                                                    <span className="truncate">{restaurant.location}</span>
                                                 </div>
-                                            )}
+
+                                                {restaurant.openingTime && restaurant.closingTime && (
+                                                    <div className="flex items-center text-gray-300 text-sm">
+                                                        <div className="p-1.5 bg-blue-600/20 rounded-lg mr-2">
+                                                            <Clock className="w-4 h-4 text-blue-400" />
+                                                        </div>
+                                                        <span>{restaurant.openingTime} - {restaurant.closingTime}</span>
+                                                    </div>
+                                                )}
+                                            </div>
 
                                             {/* Stats */}
-                                            <div className="flex items-center justify-between pt-3 border-t border-gray-200">
-                                                <div className="flex items-center">
-                                                    <Star className="w-4 h-4 text-yellow-500 mr-1" />
-                                                    <span className="text-sm font-semibold text-gray-700">
+                                            <div className="flex items-center justify-between pt-3 border-t border-gray-700">
+                                                <div className="flex items-center gap-1.5 bg-yellow-600/20 px-3 py-1.5 rounded-lg border border-yellow-500/30">
+                                                    <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
+                                                    <span className="text-sm font-bold text-yellow-300">
                                                         {restaurant.rating ? restaurant.rating.toFixed(1) : 'New'}
                                                     </span>
                                                     {restaurant.totalReviews > 0 && (
-                                                        <span className="text-xs text-gray-500 ml-1">
+                                                        <span className="text-xs text-gray-400">
                                                             ({restaurant.totalReviews})
                                                         </span>
                                                     )}
                                                 </div>
                                                 {restaurant.deliveryFee !== undefined && (
-                                                    <span className="text-sm font-semibold text-orange-600">
+                                                    <span className="text-sm font-bold text-orange-400 bg-orange-600/20 px-3 py-1.5 rounded-lg border border-orange-500/30">
                                                         ৳{restaurant.deliveryFee} delivery
                                                     </span>
                                                 )}

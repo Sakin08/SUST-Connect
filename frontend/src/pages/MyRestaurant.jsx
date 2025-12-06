@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import api from '../api/axios';
+import ImageGalleryViewer from '../components/ImageGalleryViewer';
 import {
     Plus, Edit, Trash2, Eye, EyeOff, Package, ShoppingBag,
     Clock, MapPin, Phone, Star, Camera, X
@@ -17,6 +18,8 @@ const MyRestaurant = () => {
     const [showAddItem, setShowAddItem] = useState(false);
     const [menuImages, setMenuImages] = useState([]);
     const [menuImagePreviews, setMenuImagePreviews] = useState([]);
+    const [viewingImages, setViewingImages] = useState(null);
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
     // Quick menu post form
     const [quickMenu, setQuickMenu] = useState({
@@ -207,7 +210,7 @@ const MyRestaurant = () => {
     }, {});
 
     return (
-        <div className="min-h-screen bg-gray-50 py-10">
+        <div className="min-h-screen bg-gradient-to-br from-gray-700 via-slate-700 to-gray-600 py-10">
             <div className="container mx-auto px-4 max-w-7xl">
 
                 {/* Header */}
@@ -515,7 +518,11 @@ const MyRestaurant = () => {
                                                 <img
                                                     src={menu.images[0]}
                                                     alt="Menu"
-                                                    className="w-full h-32 object-cover rounded-lg"
+                                                    className="w-full h-32 object-contain bg-gray-100 rounded-lg cursor-pointer hover:opacity-90 transition"
+                                                    onClick={() => {
+                                                        setViewingImages(menu.images);
+                                                        setCurrentImageIndex(0);
+                                                    }}
                                                 />
                                             ) : (
                                                 <div className="grid grid-cols-2 gap-1">
@@ -524,7 +531,11 @@ const MyRestaurant = () => {
                                                             key={idx}
                                                             src={img}
                                                             alt={`Menu ${idx + 1}`}
-                                                            className="w-full h-24 object-cover rounded"
+                                                            className="w-full h-24 object-contain bg-gray-100 rounded cursor-pointer hover:opacity-90 transition"
+                                                            onClick={() => {
+                                                                setViewingImages(menu.images);
+                                                                setCurrentImageIndex(idx);
+                                                            }}
                                                         />
                                                     ))}
                                                 </div>
@@ -564,6 +575,24 @@ const MyRestaurant = () => {
                     )}
                 </div>
             </div>
+
+            {/* Image Viewer Modal */}
+            {viewingImages && (
+                <ImageGalleryViewer
+                    images={viewingImages}
+                    currentIndex={currentImageIndex}
+                    onClose={() => setViewingImages(null)}
+                    onNavigate={(direction) => {
+                        if (typeof direction === 'number') {
+                            setCurrentImageIndex(direction);
+                        } else if (direction === 'prev') {
+                            setCurrentImageIndex((prev) => (prev > 0 ? prev - 1 : viewingImages.length - 1));
+                        } else if (direction === 'next') {
+                            setCurrentImageIndex((prev) => (prev < viewingImages.length - 1 ? prev + 1 : 0));
+                        }
+                    }}
+                />
+            )}
         </div>
     );
 };

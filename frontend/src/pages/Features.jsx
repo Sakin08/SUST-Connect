@@ -1,16 +1,16 @@
 import {
-    MessageSquare, Calendar, ShoppingBag, Home as HousingIcon, Users, Briefcase,
+    MessageSquare, Calendar, ShoppingBag, Home as HousingIcon, Briefcase,
     Pizza, Search, Droplet, BookOpen, Bell, Shield
 } from 'lucide-react';
 
 const Features = () => {
     const features = [
-        {//chating
+        {
             icon: MessageSquare,
             title: "Real-time Messaging",
             description: "Connect instantly with classmates through our built-in messaging system with online status indicators."
         },
-        {//academic calender
+        {
             icon: Calendar,
             title: "Events & Activities",
             description: "Discover and create campus events, RSVP, and never miss out on what's happening around you."
@@ -26,9 +26,9 @@ const Features = () => {
             description: "Find roommates, sublets, and housing options near campus with detailed listings and filters."
         },
         {
-            icon: Users,
-            title: "Study Groups",
-            description: "Form or join study groups for your courses. Collaborate and succeed together."
+            icon: BookOpen,
+            title: "Book Exchange",
+            description: "Request, lend, or exchange books with fellow students. Share knowledge and save money."
         },
         {
             icon: Briefcase,
@@ -51,7 +51,7 @@ const Features = () => {
             description: "Register as a donor or request blood in emergencies. Save lives within your community."
         },
         {
-            icon: BookOpen,
+            icon: MessageSquare,
             title: "Newsfeed",
             description: "Stay updated with campus news, announcements, and posts from your community."
         },

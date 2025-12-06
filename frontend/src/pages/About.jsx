@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { Users, Target, Heart, Zap } from 'lucide-react';
 
 const About = () => {
-    return (//about all systems 
+    return (
         <div className="min-h-screen bg-gray-50">
             <div className="bg-gradient-to-r from-indigo-600 to-blue-600 text-white py-20">
                 <div className="container mx-auto px-4">
@@ -23,8 +23,8 @@ const About = () => {
                             <h2 className="text-3xl font-bold text-gray-900">Our Mission</h2>
                         </div>
                         <p className="text-lg text-gray-700 leading-relaxed">
-                            SUST Connect is dedicated to building a vibrant, connected campus community. 
-                            We provide a comprehensive platform where students can share resources, discover events, 
+                            SUST Connect is dedicated to building a vibrant, connected campus community.
+                            We provide a comprehensive platform where students can share resources, discover events,
                             find housing, connect for study groups, and support each other through various campus activities.
                         </p>
                     </div>
@@ -60,6 +60,38 @@ const About = () => {
                             <p className="text-gray-700">
                                 From events to marketplace, housing to blood donation - everything you need in one place.
                             </p>
+                        </div>
+                    </div>
+
+                    {/* Campus Beauty Section */}
+                    <div className="mb-8">
+                        <h2 className="text-3xl font-bold text-gray-900 mb-6 text-center">Our Beautiful Campus</h2>
+                        <div className="grid md:grid-cols-2 gap-6">
+                            <div className="relative overflow-hidden rounded-lg shadow-lg group">
+                                <img
+                                    src="/image/kiloroad_2.jpg"
+                                    alt="Campus Road"
+                                    className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500"
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-50"></div>
+                                <div className="absolute bottom-4 left-4 text-white">
+                                    <h3 className="text-xl font-bold">Scenic Campus Roads</h3>
+                                    <p className="text-sm">Where every walk is memorable</p>
+                                </div>
+                            </div>
+
+                            <div className="relative overflow-hidden rounded-lg shadow-lg group">
+                                <img
+                                    src="/image/540763965_1340254950799652_6212886658485356170_n.jpg"
+                                    alt="Campus Life"
+                                    className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500"
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-50"></div>
+                                <div className="absolute bottom-4 left-4 text-white">
+                                    <h3 className="text-xl font-bold">Vibrant Campus Life</h3>
+                                    <p className="text-sm">A community that thrives together</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
 

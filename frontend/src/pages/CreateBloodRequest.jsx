@@ -45,7 +45,7 @@ const CreateBloodRequest = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-pink-50 py-12">
+        <div className="min-h-screen bg-gradient-to-br from-gray-700 via-slate-700 to-gray-600 py-12">
             <div className="container mx-auto px-6 max-w-2xl">
                 <div className="bg-white rounded-2xl shadow-xl p-8">
                     <h1 className="text-3xl font-bold text-gray-900 mb-2">🆘 Request Blood</h1>
@@ -53,8 +53,8 @@ const CreateBloodRequest = () => {
 
                     {message.text && (
                         <div className={`mb-6 px-4 py-3 rounded-lg ${message.type === 'success'
-                                ? 'bg-green-50 border border-green-200 text-green-700'
-                                : 'bg-red-50 border border-red-200 text-red-700'
+                            ? 'bg-green-50 border border-green-200 text-green-700'
+                            : 'bg-red-50 border border-red-200 text-red-700'
                             }`}>
                             {message.text}
                         </div>

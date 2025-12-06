@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
+import ImageGalleryViewer from '../components/ImageGalleryViewer';
 import {
     MapPin, Clock, Phone, Star, ArrowLeft,
     Leaf, Flame, Settings
@@ -18,6 +19,8 @@ const RestaurantDetails = () => {
     const [loading, setLoading] = useState(true);
     const [selectedCategory, setSelectedCategory] = useState('all');
     const [activeTab, setActiveTab] = useState('today'); // 'today' or 'menu' - default to today
+    const [viewingImages, setViewingImages] = useState(null);
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
     useEffect(() => {
         loadRestaurant();
@@ -83,7 +86,7 @@ const RestaurantDetails = () => {
         : menuItems.filter(item => item.category === selectedCategory);
 
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-gradient-to-br from-gray-700 via-slate-700 to-gray-600">
             {/* Back Button */}
             <div className="bg-white border-b">
                 <div className="container mx-auto px-4 py-4">
@@ -336,21 +339,29 @@ const RestaurantDetails = () => {
                                         {menu.images && menu.images.length > 0 ? (
                                             <div className="relative">
                                                 {menu.images.length === 1 ? (
-                                                    <div className="h-64 overflow-hidden">
+                                                    <div className="h-64 overflow-hidden cursor-pointer hover:opacity-90 transition"
+                                                        onClick={() => {
+                                                            setViewingImages(menu.images);
+                                                            setCurrentImageIndex(0);
+                                                        }}>
                                                         <img
                                                             src={menu.images[0]}
                                                             alt="Menu"
-                                                            className="w-full h-full object-cover"
+                                                            className="w-full h-full object-contain bg-gray-100"
                                                         />
                                                     </div>
                                                 ) : (
                                                     <div className="grid grid-cols-2 gap-1 h-64">
                                                         {menu.images.slice(0, 4).map((image, idx) => (
-                                                            <div key={idx} className="relative overflow-hidden">
+                                                            <div key={idx} className="relative overflow-hidden cursor-pointer hover:opacity-90 transition"
+                                                                onClick={() => {
+                                                                    setViewingImages(menu.images);
+                                                                    setCurrentImageIndex(idx);
+                                                                }}>
                                                                 <img
                                                                     src={image}
                                                                     alt={`Menu ${idx + 1}`}
-                                                                    className="w-full h-full object-cover"
+                                                                    className="w-full h-full object-contain bg-gray-100"
                                                                 />
                                                                 {idx === 3 && menu.images.length > 4 && (
                                                                     <div className="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center">
@@ -421,6 +432,24 @@ const RestaurantDetails = () => {
                     </div>
                 )}
             </div>
+
+            {/* Image Viewer Modal */}
+            {viewingImages && (
+                <ImageGalleryViewer
+                    images={viewingImages}
+                    currentIndex={currentImageIndex}
+                    onClose={() => setViewingImages(null)}
+                    onNavigate={(direction) => {
+                        if (typeof direction === 'number') {
+                            setCurrentImageIndex(direction);
+                        } else if (direction === 'prev') {
+                            setCurrentImageIndex((prev) => (prev > 0 ? prev - 1 : viewingImages.length - 1));
+                        } else if (direction === 'next') {
+                            setCurrentImageIndex((prev) => (prev < viewingImages.length - 1 ? prev + 1 : 0));
+                        }
+                    }}
+                />
+            )}
         </div>
     );
 };

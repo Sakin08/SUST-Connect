@@ -2,9 +2,10 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext.jsx';
 import { Link } from 'react-router-dom';
 import api from '../api/axios.js';
+import { getMySavedPosts, unsavePost } from '../api/savedPosts.js';
 // Import Lucide Icons for a modern look
 import {
-  Camera, Calendar, ShoppingBag, Home, Briefcase, Pizza, Search, BookOpen, Clock, Trash2, List, MessageSquare, Heart
+  Camera, Calendar, ShoppingBag, Home, Briefcase, Search, BookOpen, Clock, Trash2, List, MessageSquare, Heart, Bookmark, Droplet
 } from 'lucide-react';
 
 const Dashboard = () => {
@@ -15,9 +16,11 @@ const Dashboard = () => {
     buysell: [],
     housing: [],
     jobs: [],
-    food: [],
     lostFound: [],
-    studyGroups: []
+    studyGroups: [],
+    bookRequests: [],
+    bloodRequests: [],
+    saved: []
   });
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState({ type: '', text: '' });
@@ -39,30 +42,51 @@ const Dashboard = () => {
         buysellRes,
         housingRes,
         jobsRes,
-        foodRes,
         lostFoundRes,
-        studyGroupsRes
+        studyGroupsRes,
+        bookRequestsRes,
+        bloodRequestsRes,
+        savedRes
       ] = await Promise.all([
         api.get(`/posts/user/${user._id}`).catch(() => ({ data: [] })),
         api.get('/events').catch(() => ({ data: [] })),
         api.get('/buysell').catch(() => ({ data: [] })),
         api.get('/housing').catch(() => ({ data: [] })),
         api.get('/jobs').catch(() => ({ data: [] })),
-        api.get('/food').catch(() => ({ data: [] })),
         api.get('/lost-found').catch(() => ({ data: [] })),
-        api.get('/study-groups').catch(() => ({ data: [] }))
+        api.get('/study-groups').catch(() => ({ data: [] })),
+        api.get('/book-requests').catch(() => ({ data: [] })),
+        api.get('/blood-donation/requests').catch(() => ({ data: [] })),
+        getMySavedPosts().catch(() => ({ data: [] }))
       ]);
 
-      setAllContent({
+      console.log('Saved posts response:', savedRes.data);
+      console.log('Book requests response:', bookRequestsRes.data);
+      console.log('User ID:', user._id);
+
+      const bookReqs = bookRequestsRes.data?.bookRequests || [];
+      console.log('Book requests before filter:', bookReqs);
+      const filteredBookReqs = bookReqs.filter(b => {
+        console.log('Checking book request:', b._id, 'requester:', b.requester?._id, 'user:', user._id, 'match:', b.requester?._id === user._id);
+        return b.requester?._id === user._id;
+      });
+      console.log('Book requests after filter:', filteredBookReqs);
+
+      const newContent = {
         socialPosts: socialPostsRes.data || [],
         events: (eventsRes.data || []).filter(e => e.user?._id === user._id),
         buysell: (buysellRes.data || []).filter(p => p.user?._id === user._id),
         housing: (housingRes.data || []).filter(h => h.user?._id === user._id),
-        jobs: (jobsRes.data || []).filter(j => j.user?._id === user._id),
-        food: (foodRes.data || []).filter(f => f.user?._id === user._id),
-        lostFound: (lostFoundRes.data || []).filter(l => l.user?._id === user._id),
-        studyGroups: (studyGroupsRes.data || []).filter(s => s.creator?._id === user._id)
-      });
+        jobs: (jobsRes.data || []).filter(j => j.poster?._id === user._id),
+        lostFound: (lostFoundRes.data || []).filter(l => l.poster?._id === user._id),
+        studyGroups: (studyGroupsRes.data || []).filter(s => s.creator?._id === user._id),
+        bookRequests: filteredBookReqs,
+        bloodRequests: (bloodRequestsRes.data || []).filter(b => b.requester?._id === user._id),
+        saved: savedRes.data || []
+      };
+
+      console.log('Setting allContent with bookRequests:', newContent.bookRequests);
+      setAllContent(newContent);
     } catch (err) {
       console.error('Failed to load content:', err);
     } finally {
@@ -93,7 +117,26 @@ const Dashboard = () => {
     if (!confirm('Are you sure you want to delete this?')) return;
 
     try {
-      await api.delete(`/${type}/${id}`);
+      // Map frontend types to API endpoints
+      const endpointMap = {
+        socialPosts: 'posts',
+        post: 'posts',
+        buysell: 'buysell',
+        housing: 'housing',
+        jobs: 'jobs',
+        job: 'jobs',
+        events: 'events',
+        event: 'events',
+        lostFound: 'lost-found',
+        lostfound: 'lost-found',
+        studyGroups: 'study-groups',
+        studygroup: 'study-groups',
+        bloodRequests: 'blood-donation/requests',
+        bloodrequest: 'blood-donation/requests'
+      };
+
+      const endpoint = endpointMap[type] || type;
+      await api.delete(`/${endpoint}/${id}`);
       loadMyContent();
       setMessage({ type: 'success', text: 'Deleted successfully!' });
     } catch (err) {
@@ -101,28 +144,56 @@ const Dashboard = () => {
     }
   };
 
+  const handleUnsave = async (id, type) => {
+    if (!confirm('Remove this from saved posts?')) return;
+
+    try {
+      await unsavePost(id, type);
+      loadMyContent();
+      setMessage({ type: 'success', text: 'Removed from saved!' });
+    } catch (err) {
+      setMessage({ type: 'error', text: 'Failed to unsave' });
+    }
+  };
+
   const getTotalCount = () => {
-    return Object.values(allContent).reduce((sum, arr) => sum + arr.length, 0);
+    // Exclude saved from total count as they're not user's own posts
+    const { saved, ...ownContent } = allContent;
+    return Object.values(ownContent).reduce((sum, arr) => sum + arr.length, 0);
   };
 
   const getFilteredContent = () => {
     if (activeTab === 'all') {
       const all = [];
-      Object.entries(allContent).forEach(([type, items]) => {
+      const { saved, ...ownContent } = allContent;
+      Object.entries(ownContent).forEach(([type, items]) => {
         items.forEach(item => all.push({ ...item, _type: type }));
       });
       return all.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     }
+    if (activeTab === 'saved') {
+      console.log('Saved content:', allContent.saved);
+      const savedItems = allContent.saved.map(savedItem => ({
+        ...savedItem.post,
+        _type: savedItem.postType,
+        savedAt: savedItem.createdAt
+      }));
+      console.log('Mapped saved items:', savedItems);
+      // Sort by savedAt date (most recent first)
+      return savedItems.sort((a, b) => new Date(b.savedAt) - new Date(a.savedAt));
+    }
+    console.log('Active tab:', activeTab, 'Content:', allContent[activeTab]);
     return allContent[activeTab] || [];
   };
   // --- End Functionality ---
 
   // --- New/Refined UI Logic ---
   const renderPostItem = (item, type) => {
+    console.log('Rendering item:', { type, item });
     const configs = {
       socialPosts: {
         title: item.content?.text?.substring(0, 60) || 'Social Post',
-        subtitle: `${item.likes?.length || 0} Likes • ${item.comments?.length || 0} Comments`,
+        subtitle: `${item.likes?.length || 0} Likes • ${item.commentCount || 0} Comments`,
         link: `/post/${item._id}`,
         Icon: MessageSquare,
         color: 'from-blue-500 to-indigo-600',
@@ -132,11 +203,38 @@ const Dashboard = () => {
         stats: (
           <div className="flex items-center gap-3 text-sm text-gray-500">
             <span className="flex items-center gap-1"><Heart size={14} className='text-red-500' /> {item.likes?.length || 0}</span>
-            <span className="flex items-center gap-1"><MessageSquare size={14} /> {item.comments?.length || 0}</span>
+            <span className="flex items-center gap-1"><MessageSquare size={14} /> {item.commentCount || 0}</span>
+          </div>
+        )
+      },
+      post: {
+        title: item.content?.text?.substring(0, 60) || 'Social Post',
+        subtitle: `${item.likes?.length || 0} Likes • ${item.commentCount || 0} Comments`,
+        link: `/post/${item._id}`,
+        Icon: MessageSquare,
+        color: 'from-blue-500 to-indigo-600',
+        bgColor: 'bg-blue-50',
+        textColor: 'text-blue-600',
+        label: 'Social',
+        stats: (
+          <div className="flex items-center gap-3 text-sm text-gray-500">
+            <span className="flex items-center gap-1"><Heart size={14} className='text-red-500' /> {item.likes?.length || 0}</span>
+            <span className="flex items-center gap-1"><MessageSquare size={14} /> {item.commentCount || 0}</span>
           </div>
         )
       },
       events: {
+        title: item.title,
+        subtitle: `Event on ${new Date(item.date).toLocaleDateString()} at ${item.location}`,
+        link: `/events`,
+        Icon: Calendar,
+        color: 'from-purple-500 to-pink-600',
+        bgColor: 'bg-purple-50',
+        textColor: 'text-purple-600',
+        label: 'Event',
+        stats: <span className="text-sm text-gray-500 font-medium">Interested: {item.interested?.length || 0}</span>
+      },
+      event: {
         title: item.title,
         subtitle: `Event on ${new Date(item.date).toLocaleDateString()} at ${item.location}`,
         link: `/events`,
@@ -155,7 +253,7 @@ const Dashboard = () => {
         color: 'from-green-500 to-emerald-600',
         bgColor: 'bg-green-50',
         textColor: 'text-green-600',
-        label: 'Buy/Sell',
+        label: 'Marketplace',
         price: `৳${item.price}`,
         stats: <span className="text-green-600 font-bold text-lg">{`৳${item.price}`}</span>
       },
@@ -171,6 +269,17 @@ const Dashboard = () => {
         price: `৳${item.rent}/mo`,
         stats: <span className="text-orange-600 font-bold text-lg">{`৳${item.rent}/mo`}</span>
       },
+      food: {
+        title: item.name || item.title || 'Food Item',
+        subtitle: item.description?.substring(0, 50) || 'Food menu item',
+        link: `/food-menu/${item._id}`,
+        Icon: ShoppingBag,
+        color: 'from-yellow-500 to-orange-600',
+        bgColor: 'bg-yellow-50',
+        textColor: 'text-yellow-600',
+        label: 'Food',
+        stats: <span className="text-sm text-gray-500 font-medium">Food Menu</span>
+      },
       jobs: {
         title: item.title,
         subtitle: item.company,
@@ -180,20 +289,53 @@ const Dashboard = () => {
         bgColor: 'bg-cyan-50',
         textColor: 'text-cyan-600',
         label: 'Job',
-        stats: <span className="text-sm text-gray-500 font-medium">{item.type}</span>
+        stats: <span className="text-sm text-gray-500 font-medium">{item.type?.replace('-', ' ')}</span>
       },
-      food: {
-        title: item.restaurant,
-        subtitle: item.description?.substring(0, 50) || 'Food order group',
-        link: `/food/${item._id}`,
-        Icon: Pizza,
-        color: 'from-yellow-500 to-orange-600',
-        bgColor: 'bg-yellow-50',
-        textColor: 'text-yellow-600',
-        label: 'Food',
-        stats: <span className="text-sm text-gray-500 font-medium">Joined: {item.participants?.length || 0}</span>
+      bloodRequests: {
+        title: `Blood Needed: ${item.bloodGroup || 'Unknown'}`,
+        subtitle: `Location: ${item.location || 'Not specified'}`,
+        link: `/blood-donation/request/${item._id}`,
+        Icon: Droplet,
+        color: 'from-red-500 to-rose-600',
+        bgColor: 'bg-red-50',
+        textColor: 'text-red-600',
+        label: 'Blood Request',
+        stats: <span className={`text-sm font-semibold ${item.urgency === 'critical' ? 'text-red-600' : item.urgency === 'high' ? 'text-orange-600' : 'text-yellow-600'}`}>{item.urgency?.toUpperCase() || 'MEDIUM'}</span>
+      },
+      bloodrequest: {
+        title: `Blood Needed: ${item.bloodGroup || 'Unknown'}`,
+        subtitle: `Location: ${item.location || 'Not specified'}`,
+        link: `/blood-donation/request/${item._id}`,
+        Icon: Droplet,
+        color: 'from-red-500 to-rose-600',
+        bgColor: 'bg-red-50',
+        textColor: 'text-red-600',
+        label: 'Blood Request',
+        stats: <span className={`text-sm font-semibold ${item.urgency === 'critical' ? 'text-red-600' : item.urgency === 'high' ? 'text-orange-600' : 'text-yellow-600'}`}>{item.urgency?.toUpperCase() || 'MEDIUM'}</span>
       },
       lostFound: {
+        title: item.title,
+        subtitle: `Status: ${item.status}`,
+        link: `/lost-found/${item._id}`,
+        Icon: Search,
+        color: 'from-orange-500 to-amber-600',
+        bgColor: 'bg-orange-50',
+        textColor: 'text-orange-600',
+        label: 'Lost/Found',
+        stats: <span className={`text-sm font-semibold ${item.status === 'Lost' ? 'text-red-500' : 'text-green-500'}`}>{item.status}</span>
+      },
+      job: {
+        title: item.title,
+        subtitle: item.company,
+        link: `/jobs/${item._id}`,
+        Icon: Briefcase,
+        color: 'from-cyan-500 to-blue-600',
+        bgColor: 'bg-cyan-50',
+        textColor: 'text-cyan-600',
+        label: 'Job',
+        stats: <span className="text-sm text-gray-500 font-medium">{item.type?.replace('-', ' ')}</span>
+      },
+      lostfound: {
         title: item.title,
         subtitle: `Status: ${item.status}`,
         link: `/lost-found/${item._id}`,
@@ -203,6 +345,17 @@ const Dashboard = () => {
         textColor: 'text-red-600',
         label: 'Lost/Found',
         stats: <span className={`text-sm font-semibold ${item.status === 'Lost' ? 'text-red-500' : 'text-green-500'}`}>{item.status}</span>
+      },
+      studygroup: {
+        title: item.name,
+        subtitle: `Topic: ${item.topic}`,
+        link: `/study-groups/${item._id}`,
+        Icon: BookOpen,
+        color: 'from-indigo-500 to-purple-600',
+        bgColor: 'bg-indigo-50',
+        textColor: 'text-indigo-600',
+        label: 'Study Group',
+        stats: <span className="text-sm text-gray-500 font-medium">Members: {item.members?.length || 0}</span>
       },
       studyGroups: {
         title: item.name,
@@ -214,13 +367,38 @@ const Dashboard = () => {
         textColor: 'text-indigo-600',
         label: 'Study Group',
         stats: <span className="text-sm text-gray-500 font-medium">Members: {item.members?.length || 0}</span>
+      },
+      bookrequest: {
+        title: item.bookTitle,
+        subtitle: `${item.bookType} - ${item.status}`,
+        link: `/books/${item._id}`,
+        Icon: BookOpen,
+        color: 'from-teal-500 to-cyan-600',
+        bgColor: 'bg-teal-50',
+        textColor: 'text-teal-600',
+        label: 'Book Request',
+        stats: <span className="text-sm text-gray-500 font-medium">Responses: {item.responses?.length || 0}</span>
+      },
+      bookRequests: {
+        title: item.bookTitle,
+        subtitle: `${item.bookType} - ${item.status}`,
+        link: `/books/${item._id}`,
+        Icon: BookOpen,
+        color: 'from-teal-500 to-cyan-600',
+        bgColor: 'bg-teal-50',
+        textColor: 'text-teal-600',
+        label: 'Book Request',
+        stats: <span className="text-sm text-gray-500 font-medium">Responses: {item.responses?.length || 0}</span>
       }
     };
 
     const config = configs[type];
-    if (!config) return null;
+    if (!config) {
+      console.warn('No config found for type:', type);
+      return null;
+    }
 
-    const image = item.images?.[0] || item.image || item.photos?.[0] || null;
+    const image = item.images?.[0] || item.content?.images?.[0] || item.image || item.photos?.[0] || null;
 
     return (
       <Link
@@ -250,12 +428,20 @@ const Dashboard = () => {
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
-                  handleDelete(item._id, type);
+                  if (activeTab === 'saved') {
+                    handleUnsave(item._id, type);
+                  } else {
+                    handleDelete(item._id, type);
+                  }
                 }}
                 className="opacity-0 group-hover:opacity-100 transition-opacity p-1.5 hover:bg-red-50 rounded-lg shrink-0"
-                title="Delete"
+                title={activeTab === 'saved' ? 'Remove from saved' : 'Delete'}
               >
-                <Trash2 className="w-4 h-4 text-red-600" />
+                {activeTab === 'saved' ? (
+                  <Bookmark className="w-4 h-4 text-red-600" />
+                ) : (
+                  <Trash2 className="w-4 h-4 text-red-600" />
+                )}
               </button>
             </div>
             <p className="text-sm text-gray-600 line-clamp-1">{config.subtitle}</p>
@@ -286,20 +472,21 @@ const Dashboard = () => {
 
   const tabConfig = [
     { key: 'all', label: 'All Posts', Icon: List, count: getTotalCount() },
+    { key: 'saved', label: 'Saved', Icon: Bookmark, count: allContent.saved.length },
     { key: 'socialPosts', label: 'Social', Icon: MessageSquare, count: allContent.socialPosts.length },
     { key: 'events', label: 'Events', Icon: Calendar, count: allContent.events.length },
-    { key: 'buysell', label: 'Buy/Sell', Icon: ShoppingBag, count: allContent.buysell.length },
+    { key: 'buysell', label: 'Marketplace', Icon: ShoppingBag, count: allContent.buysell.length },
     { key: 'housing', label: 'Housing', Icon: Home, count: allContent.housing.length },
     { key: 'jobs', label: 'Jobs', Icon: Briefcase, count: allContent.jobs.length },
-    { key: 'food', label: 'Food', Icon: Pizza, count: allContent.food.length },
+    { key: 'bloodRequests', label: 'Blood', Icon: Droplet, count: allContent.bloodRequests.length },
     { key: 'lostFound', label: 'Lost/Found', Icon: Search, count: allContent.lostFound.length },
-    { key: 'studyGroups', label: 'Study Groups', Icon: BookOpen, count: allContent.studyGroups.length }
+    { key: 'bookRequests', label: 'Books', Icon: BookOpen, count: allContent.bookRequests?.length || 0 }
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 py-10">
+    <div className="min-h-screen bg-gradient-to-br from-gray-700 via-slate-700 to-gray-600 py-10">
       <div className="container mx-auto px-4 max-w-7xl">
-        <h1 className="text-4xl font-extrabold text-gray-900 mb-8">My Dashboard</h1>
+        <h1 className="text-4xl font-extrabold text-white mb-8">My Dashboard</h1>
 
         {message.text && (
           <div className={`mb-6 px-4 py-3 rounded-xl border-l-4 font-medium ${message.type === 'success'
@@ -379,7 +566,7 @@ const Dashboard = () => {
                     to="/saved"
                     className="text-center bg-gray-100 text-gray-700 py-2 rounded-lg font-semibold hover:bg-gray-200 transition text-sm"
                   >
-                    👍 Saved
+                    ❤️ Saved
                   </Link>
                 </div> */}
 
@@ -454,5 +641,5 @@ const Dashboard = () => {
     </div>
   );
 };
-//dashboard system added
+
 export default Dashboard;

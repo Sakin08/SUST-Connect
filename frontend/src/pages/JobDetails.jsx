@@ -5,10 +5,12 @@ import { useAuth } from '../context/AuthContext';
 import CommentsSection from '../components/CommentsSection';
 import PosterInfo from '../components/PosterInfo';
 import MessageButton from '../components/MessageButton';
-import FavoriteButton from '../components/FavoriteButton';
+import ImageGallery from '../components/ImageGallery';
+import ReportButton from '../components/ReportButton';
+
 import {
-    ArrowLeft, MapPin, DollarSign, Clock, Eye, Mail, Phone,
-    ExternalLink, Briefcase, Calendar, Tag, MessageCircle, Trash2, CheckCircle
+    ArrowLeft, MapPin, Clock, Eye, Mail, Phone,
+    ExternalLink, Briefcase, Calendar, Tag, MessageCircle, Trash2, CheckCircle, Edit
 } from 'lucide-react';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
@@ -66,10 +68,10 @@ const JobDetails = () => {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center">
-                <div className="text-center">
-                    <div className="w-16 h-16 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                    <p className="text-gray-600">Loading...</p>
+            <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 to-gray-900">
+                <div className="text-center p-12 bg-white/10 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20">
+                    <div className="w-16 h-16 border-4 border-cyan-500 border-t-transparent rounded-full animate-spin mx-auto mb-6"></div>
+                    <p className="text-xl font-bold text-white">Loading details...</p>
                 </div>
             </div>
         );
@@ -77,11 +79,12 @@ const JobDetails = () => {
 
     if (!job) {
         return (
-            <div className="min-h-screen flex items-center justify-center">
-                <div className="text-center bg-white p-10 rounded-xl shadow-lg">
-                    <h2 className="text-2xl font-bold text-gray-900 mb-4">Job Not Found</h2>
-                    <Link to="/jobs" className="text-indigo-600 hover:text-indigo-700 font-medium">
-                        ← Back to Jobs
+            <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-900 to-pink-900 p-6">
+                <div className="max-w-md w-full p-10 text-center bg-white/10 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20">
+                    <Briefcase className="w-20 h-20 text-red-400 mx-auto mb-6" />
+                    <p className="text-2xl font-bold text-white mb-6">Job Not Found</p>
+                    <Link to="/jobs" className="inline-flex items-center gap-2 bg-white text-indigo-600 px-6 py-3 rounded-xl font-bold hover:bg-indigo-50 transition">
+                        <ArrowLeft /> Back to Jobs
                     </Link>
                 </div>
             </div>
@@ -105,133 +108,109 @@ const JobDetails = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 py-8">
-            <div className="container mx-auto px-4 max-w-6xl">
+        <div className="min-h-screen bg-gradient-to-br from-gray-900 via-slate-800 to-gray-900 py-8">
+            <div className="container mx-auto px-4 max-w-7xl">
                 <Link
                     to="/jobs"
-                    className="inline-flex items-center gap-2 text-indigo-600 hover:text-indigo-700 font-medium mb-6"
+                    className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-lg text-cyan-300 hover:text-white hover:bg-gradient-to-r hover:from-indigo-600 hover:to-purple-600 px-5 py-3 rounded-xl font-bold mb-8 shadow-lg hover:shadow-xl transition-all border border-white/10"
                 >
-                    <ArrowLeft className="w-4 h-4" />
+                    <ArrowLeft className="w-5 h-5" />
                     Back to Jobs
                 </Link>
 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     {/* Main Content */}
-                    <div className="lg:col-span-2 space-y-6">
+                    <div className="lg:col-span-2 space-y-7">
                         {/* Header Card */}
-                        <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+                        <div className="bg-gray-800/90 backdrop-blur-lg border border-gray-700/50 rounded-2xl shadow-2xl overflow-hidden">
                             {/* Images Gallery */}
                             {job.images && job.images.length > 0 && (
                                 <div className="relative">
-                                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 p-4">
-                                        {job.images.map((image, idx) => (
-                                            <a
-                                                key={idx}
-                                                href={image}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="relative group overflow-hidden rounded-lg"
-                                            >
-                                                <img
-                                                    src={image}
-                                                    alt={`${job.company} - Image ${idx + 1}`}
-                                                    className="w-full h-48 object-cover group-hover:scale-110 transition"
-                                                />
-                                            </a>
-                                        ))}
-                                    </div>
-                                    <div className="absolute top-8 left-8 flex gap-2">
+                                    <ImageGallery images={job.images} />
+                                    <div className="absolute top-4 left-4 flex gap-2 z-10 pointer-events-none">
                                         <span className={`px-3 py-1 rounded-full text-sm font-semibold text-white ${jobTypeClasses(job.type)}`}>
                                             {job.type.replace('-', ' ').toUpperCase()}
                                         </span>
                                     </div>
-                                    <div className="absolute top-8 right-8">
-                                        <FavoriteButton postType="job" postId={job._id} />
-                                    </div>
                                 </div>
                             )}
 
-                            <div className="p-6">
-                                <h1 className="text-3xl font-bold text-gray-900 mb-2">{job.title}</h1>
-                                <p className="text-xl text-indigo-600 font-semibold mb-4 flex items-center gap-2">
-                                    <Briefcase className="w-5 h-5" />
+                            <div className="p-8">
+                                <h1 className="text-4xl font-black text-white mb-5">{job.title}</h1>
+                                <p className="text-2xl text-cyan-400 font-bold mb-6 flex items-center gap-3">
+                                    <Briefcase className="w-7 h-7" />
                                     {job.company}
                                 </p>
 
                                 {/* Deadline */}
                                 {job.applicationDeadline && (
                                     <div className="mb-6">
-                                        <span className="text-sm text-red-600 flex items-center gap-1 font-medium bg-red-50 px-3 py-1.5 rounded-full inline-flex">
-                                            <Calendar className="w-4 h-4" />
+                                        <span className="inline-flex items-center gap-2 px-4 py-2 bg-red-500/20 text-red-300 rounded-full font-bold border border-red-400/40">
+                                            <Calendar className="w-5 h-5" />
                                             Deadline: {formatDate(job.applicationDeadline)}
                                         </span>
                                     </div>
                                 )}
 
                                 {/* Quick Info Grid */}
-                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                    <div className="bg-indigo-50 rounded-lg p-4 text-center">
-                                        <MapPin className="w-6 h-6 text-indigo-600 mx-auto mb-2" />
-                                        <p className="text-xs text-gray-600">Location</p>
-                                        <p className="font-semibold text-gray-900 text-sm">{job.location}</p>
+                                <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
+                                    <div className="bg-gray-900/70 border border-cyan-800/40 rounded-xl p-5 text-center">
+                                        <MapPin className="w-9 h-9 text-cyan-400 mx-auto mb-2" />
+                                        <p className="text-xs text-gray-400">Location</p>
+                                        <p className="text-lg font-bold text-white">{job.location}</p>
                                     </div>
 
                                     {job.salary && (
-                                        <div className="bg-green-50 rounded-lg p-4 text-center">
-                                            {/* <DollarSign className="w-6 h-6 text-green-600 mx-auto mb-2" /> */}
-                                            TK
-                                            <p className="text-xs text-gray-600">Salary</p>
-                                            <p className="font-semibold text-gray-900 text-sm">{job.salary}</p>
+                                        <div className="bg-gray-900/70 border border-emerald-800/40 rounded-xl p-5 text-center">
+                                            <p className="text-2xl font-bold text-emerald-400 mb-1">৳</p>
+                                            <p className="text-xs text-gray-400">Salary</p>
+                                            <p className="text-lg font-bold text-white">{job.salary}</p>
                                         </div>
                                     )}
 
                                     {job.duration && (
-                                        <div className="bg-blue-50 rounded-lg p-4 text-center">
-                                            <Clock className="w-6 h-6 text-blue-600 mx-auto mb-2" />
-                                            <p className="text-xs text-gray-600">Duration</p>
-                                            <p className="font-semibold text-gray-900 text-sm">{job.duration}</p>
+                                        <div className="bg-gray-900/70 border border-blue-800/40 rounded-xl p-5 text-center">
+                                            <Clock className="w-9 h-9 text-blue-400 mx-auto mb-2" />
+                                            <p className="text-xs text-gray-400">Duration</p>
+                                            <p className="text-lg font-bold text-white">{job.duration}</p>
                                         </div>
                                     )}
 
-                                    <div className="bg-purple-50 rounded-lg p-4 text-center">
-                                        <Eye className="w-6 h-6 text-purple-600 mx-auto mb-2" />
-                                        <p className="text-xs text-gray-600">Views</p>
-                                        <p className="font-semibold text-gray-900 text-sm">{job.views || 0}</p>
-                                    </div>
+
                                 </div>
                             </div>
                         </div>
 
                         {/* Description */}
-                        <div className="bg-white rounded-xl shadow-lg p-6">
-                            <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-                                <MessageCircle className="w-5 h-5 text-indigo-600" />
+                        <div className="bg-gray-800/90 backdrop-blur-lg border border-gray-700/50 rounded-2xl shadow-xl p-8">
+                            <h2 className="text-2xl font-bold text-white mb-5 flex items-center gap-3">
+                                <MessageCircle className="w-7 h-7 text-cyan-400" />
                                 Job Description
                             </h2>
-                            <p className="text-gray-700 leading-relaxed whitespace-pre-line">{job.description}</p>
+                            <p className="text-gray-200 text-base leading-relaxed whitespace-pre-line">{job.description}</p>
                         </div>
 
                         {/* Requirements */}
                         {job.requirements && (
-                            <div className="bg-white rounded-xl shadow-lg p-6">
-                                <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-                                    <CheckCircle className="w-5 h-5 text-indigo-600" />
+                            <div className="bg-gray-800/90 backdrop-blur-lg border border-gray-700/50 rounded-2xl shadow-xl p-8">
+                                <h2 className="text-2xl font-bold text-white mb-5 flex items-center gap-3">
+                                    <CheckCircle className="w-7 h-7 text-cyan-400" />
                                     Requirements
                                 </h2>
-                                <p className="text-gray-700 leading-relaxed whitespace-pre-line">{job.requirements}</p>
+                                <p className="text-gray-200 text-base leading-relaxed whitespace-pre-line">{job.requirements}</p>
                             </div>
                         )}
 
                         {/* Skills */}
                         {job.skills && job.skills.length > 0 && (
-                            <div className="bg-white rounded-xl shadow-lg p-6">
-                                <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-                                    <Tag className="w-5 h-5 text-indigo-600" />
+                            <div className="bg-gray-800/90 backdrop-blur-lg border border-gray-700/50 rounded-2xl shadow-xl p-8">
+                                <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                                    <Tag className="w-7 h-7 text-cyan-400" />
                                     Required Skills
                                 </h2>
-                                <div className="flex flex-wrap gap-2">
+                                <div className="flex flex-wrap gap-3">
                                     {job.skills.map((skill, idx) => (
-                                        <span key={idx} className="px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-sm font-medium">
+                                        <span key={idx} className="px-4 py-2 bg-cyan-500/20 text-cyan-300 rounded-full text-sm font-bold border border-cyan-400/40">
                                             {skill}
                                         </span>
                                     ))}
@@ -244,58 +223,74 @@ const JobDetails = () => {
                     </div>
 
                     {/* Sidebar */}
-                    <div className="lg:col-span-1 space-y-6">
+                    <div className="lg:col-span-1">
                         {/* Poster Info Card */}
-                        <div className="bg-white rounded-xl shadow-lg p-6 sticky top-6">
-                            <h3 className="text-lg font-bold text-gray-900 mb-4">Posted By</h3>
-                            <PosterInfo user={job.poster} createdAt={job.createdAt} />
+                        <div className="bg-gray-800/95 backdrop-blur-xl border border-cyan-700/30 rounded-2xl shadow-2xl p-7 sticky top-6">
+                            <h3 className="text-2xl font-black text-white mb-6 tracking-tight">Contact Information</h3>
+
+                            {/* User Profile Highlight */}
+                            <div className="p-4 bg-gradient-to-br from-indigo-900/50 via-purple-900/40 to-pink-900/30 border-2 border-indigo-500/40 rounded-xl shadow-lg mb-6">
+                                <PosterInfo user={job.poster} createdAt={job.createdAt} />
+                            </div>
 
                             {/* Contact Details */}
-                            <div className="mt-4 space-y-3">
-                                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                                    <Mail className="w-5 h-5 text-indigo-600" />
-                                    <div className="flex-1 min-w-0">
-                                        <p className="text-xs text-gray-600">Email</p>
-                                        <a href={`mailto:${job.contactEmail}`} className="font-semibold text-gray-900 hover:text-indigo-600 text-sm truncate block">
-                                            {job.contactEmail}
-                                        </a>
+                            <div className="mt-6 space-y-4">
+                                <div className="p-5 bg-gradient-to-r from-cyan-900/40 to-blue-900/30 border border-cyan-600/40 rounded-xl">
+                                    <div className="flex items-center gap-4">
+                                        <div className="p-3 bg-cyan-500/20 rounded-lg">
+                                            <Mail className="w-7 h-7 text-cyan-300" />
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <p className="text-sm text-gray-400">Email</p>
+                                            <a href={`mailto:${job.contactEmail}`} className="text-lg font-bold text-white hover:text-cyan-300 transition truncate block">
+                                                {job.contactEmail}
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
 
                                 {job.contactPhone && (
-                                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                                        <Phone className="w-5 h-5 text-indigo-600" />
-                                        <div>
-                                            <p className="text-xs text-gray-600">Phone</p>
-                                            <a href={`tel:${job.contactPhone}`} className="font-semibold text-gray-900 hover:text-indigo-600 text-sm">
-                                                {job.contactPhone}
-                                            </a>
+                                    <div className="p-5 bg-gradient-to-r from-emerald-900/40 to-green-900/30 border border-emerald-600/40 rounded-xl">
+                                        <div className="flex items-center gap-4">
+                                            <div className="p-3 bg-emerald-500/20 rounded-lg">
+                                                <Phone className="w-7 h-7 text-emerald-300" />
+                                            </div>
+                                            <div>
+                                                <p className="text-sm text-gray-400">Phone</p>
+                                                <a href={`tel:${job.contactPhone}`} className="text-lg font-bold text-white hover:text-emerald-300 transition">
+                                                    {job.contactPhone}
+                                                </a>
+                                            </div>
                                         </div>
                                     </div>
                                 )}
 
                                 {job.applicationLink && (
-                                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                                        <ExternalLink className="w-5 h-5 text-indigo-600" />
-                                        <div className="flex-1 min-w-0">
-                                            <p className="text-xs text-gray-600">Application Link</p>
-                                            <a
-                                                href={job.applicationLink}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="font-semibold text-indigo-600 hover:text-indigo-700 text-sm truncate block"
-                                            >
-                                                Apply Here
-                                            </a>
+                                    <div className="p-5 bg-gradient-to-r from-purple-900/40 to-indigo-900/30 border border-purple-600/40 rounded-xl">
+                                        <div className="flex items-center gap-4">
+                                            <div className="p-3 bg-purple-500/20 rounded-lg">
+                                                <ExternalLink className="w-7 h-7 text-purple-300" />
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <p className="text-sm text-gray-400">Application Link</p>
+                                                <a
+                                                    href={job.applicationLink}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="text-lg font-bold text-purple-300 hover:text-purple-200 transition truncate block"
+                                                >
+                                                    Apply Here
+                                                </a>
+                                            </div>
                                         </div>
                                     </div>
                                 )}
                             </div>
 
                             {/* Action Buttons */}
-                            <div className="mt-4 space-y-2">
+                            <div className="mt-7 space-y-4">
                                 {/* Apply Button */}
-                                {user && !isOwner && !hasApplied && (
+                                {/* {user && !isOwner && !hasApplied && (
                                     <button
                                         onClick={handleApply}
                                         className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-lg font-semibold transition flex items-center justify-center gap-2"
@@ -303,14 +298,14 @@ const JobDetails = () => {
                                         <CheckCircle className="w-4 h-4" />
                                         Apply Now
                                     </button>
-                                )}
+                                )} */}
 
                                 {user && !isOwner && hasApplied && (
                                     <button
                                         disabled
-                                        className="w-full bg-green-500 text-white py-3 rounded-lg font-semibold cursor-not-allowed flex items-center justify-center gap-2"
+                                        className="w-full bg-emerald-600 text-white py-4 rounded-xl font-bold cursor-not-allowed flex items-center justify-center gap-2 shadow-lg"
                                     >
-                                        <CheckCircle className="w-4 h-4" />
+                                        <CheckCircle className="w-5 h-5" />
                                         Applied
                                     </button>
                                 )}
@@ -321,9 +316,9 @@ const JobDetails = () => {
                                         <MessageButton recipientId={job.poster._id} />
                                         <a
                                             href={`mailto:${job.contactEmail}`}
-                                            className="w-full bg-white hover:bg-gray-50 text-gray-700 px-4 py-3 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 border-2 border-gray-300"
+                                            className="w-full block text-center bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold py-4 rounded-xl shadow-lg transform hover:scale-105 transition-all duration-200"
                                         >
-                                            <Mail className="w-4 h-4" />
+                                            <Mail className="inline mr-2" size={20} />
                                             Send Email
                                         </a>
                                     </>
@@ -333,26 +328,40 @@ const JobDetails = () => {
                                 {!user && (
                                     <Link
                                         to="/login"
-                                        className="w-full text-center block bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-lg font-semibold transition"
+                                        className="w-full text-center block bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white py-4 rounded-xl font-bold shadow-lg transform hover:scale-105 transition-all duration-200"
                                     >
                                         Log in to Apply
                                     </Link>
                                 )}
 
                                 {/* Owner Actions */}
-                                {isOwner && (
+                                {isOwner ? (
                                     <>
-                                        <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg text-center">
-                                            <p className="text-sm text-blue-800">This is your post</p>
+                                        <Link
+                                            to={`/jobs/edit/${job._id}`}
+                                            className="w-full block text-center bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold py-4 rounded-xl shadow-lg transform hover:scale-105 transition-all duration-200"
+                                        >
+                                            <Edit className="inline mr-2" size={20} />
+                                            Edit Job
+                                        </Link>
+                                        <div className="text-center py-3 bg-gradient-to-r from-purple-900/30 to-indigo-900/30 border border-purple-600/40 rounded-xl">
+                                            <p className="text-purple-300 font-medium">This is your post</p>
                                         </div>
                                         <button
                                             onClick={handleDelete}
-                                            className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold transition"
+                                            className="w-full flex items-center justify-center gap-2 px-4 py-4 bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-500 hover:to-pink-500 text-white rounded-xl font-bold shadow-lg transform hover:scale-105 transition-all duration-200"
                                         >
-                                            <Trash2 size={16} />
+                                            <Trash2 size={20} />
                                             Delete Job
                                         </button>
                                     </>
+                                ) : user && (
+                                    <ReportButton
+                                        itemId={job._id}
+                                        itemType="job"
+                                        reportedUserId={job.poster?._id}
+                                        className="w-full justify-center"
+                                    />
                                 )}
                             </div>
                         </div>

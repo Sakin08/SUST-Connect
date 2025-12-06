@@ -156,7 +156,7 @@ const CreateRestaurant = () => {
     ];
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-red-50 py-10">
+        <div className="min-h-screen bg-gradient-to-br from-gray-700 via-slate-700 to-gray-600 py-10">
             <div className="container mx-auto px-4 max-w-4xl">
                 <div className="mb-8">
                     <h1 className="text-4xl font-bold text-gray-900 mb-2">Create Your Restaurant</h1>
