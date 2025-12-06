@@ -54,11 +54,16 @@ const electionSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    // Creator
+    // Creator (admin who created/approved the election)
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
+    },
+    // Original requester (user who requested the election)
+    requestedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
     },
   },
   {
