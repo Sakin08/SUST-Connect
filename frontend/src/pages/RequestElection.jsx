@@ -81,6 +81,15 @@ const RequestElection = () => {
             return;
         }
 
+        // For society elections, check if position name is filled
+        if (formData.type === 'society') {
+            const selectedPosition = positions[candidateForm.positionIndex];
+            if (!selectedPosition || !selectedPosition.positionName.trim()) {
+                alert('Please fill in the position name before adding candidates');
+                return;
+            }
+        }
+
         // Check for duplicates
         const isDuplicate = candidates.some(c =>
             c.registrationNumber === candidateForm.registrationNumber.trim()
@@ -94,14 +103,18 @@ const RequestElection = () => {
         const newCandidate = {
             ...candidateForm,
             id: Date.now(),
-            positionName: formData.type === 'cr' ? 'CR' : (positions[candidateForm.positionIndex]?.positionName || 'Position')
+            positionName: formData.type === 'cr' ? 'CR' : (positions[candidateForm.positionIndex]?.positionName || 'Position'),
+            positionIndex: candidateForm.positionIndex // Store the index for reference
         };
 
+        console.log('Adding candidate:', newCandidate); // Debug log
+
         setCandidates([...candidates, newCandidate]);
+        // Keep the same position selected, only clear registration and manifesto
         setCandidateForm({
             registrationNumber: '',
             manifesto: '',
-            positionIndex: 0
+            positionIndex: candidateForm.positionIndex // Keep the same position
         });
     };
 
@@ -150,6 +163,17 @@ const RequestElection = () => {
         try {
             setSubmitting(true);
 
+            // Debug: Log candidates before submitting
+            console.log('=== SUBMITTING ELECTION REQUEST ===');
+            console.log('Positions:', finalPositions);
+            console.log('Candidates array:', candidates);
+            console.log('Mapped candidates:', candidates.map(c => ({
+                registrationNumber: c.registrationNumber,
+                name: c.name || '',
+                manifesto: c.manifesto || '',
+                positionName: c.positionName
+            })));
+
             // Submit election request
             await electionRequestsApi.create({
                 ...formData,
@@ -160,7 +184,8 @@ const RequestElection = () => {
                 candidates: candidates.map(c => ({
                     registrationNumber: c.registrationNumber,
                     name: c.name || '',
-                    manifesto: c.manifesto || ''
+                    manifesto: c.manifesto || '',
+                    positionName: c.positionName // Include position name for proper assignment
                 }))
             });
 
@@ -435,7 +460,11 @@ const RequestElection = () => {
                                     {formData.type === 'society' && (
                                         <select
                                             value={candidateForm.positionIndex}
-                                            onChange={(e) => setCandidateForm({ ...candidateForm, positionIndex: parseInt(e.target.value) })}
+                                            onChange={(e) => {
+                                                const newIndex = parseInt(e.target.value);
+                                                console.log('Position selected:', newIndex, positions[newIndex]?.positionName);
+                                                setCandidateForm({ ...candidateForm, positionIndex: newIndex });
+                                            }}
                                             className="flex-1 px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                                         >
                                             {positions.map((pos, idx) => (

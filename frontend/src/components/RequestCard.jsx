@@ -29,17 +29,20 @@ const RequestCard = ({ request, onUpdate }) => {
     const handleMarkFulfilled = async () => {
         if (!confirm('Mark this request as fulfilled? The request will be automatically removed.')) return;
         try {
-            // First mark as fulfilled
-            await api.patch(
-                `/blood-donation/requests/${request._id}/status`,
-                { status: 'fulfilled' }
-            );
-            // Then delete it
+            // Delete the request directly (no need to mark as fulfilled first)
             await api.delete(`/blood-donation/requests/${request._id}`);
+            // Update UI immediately
             if (onUpdate) onUpdate();
             alert('Blood request marked as fulfilled and removed!');
         } catch (err) {
-            alert('Failed to mark as fulfilled');
+            console.error('Error marking as fulfilled:', err);
+            // If request already deleted (404), still update UI
+            if (err.response?.status === 404) {
+                if (onUpdate) onUpdate();
+                alert('Request has been removed.');
+            } else {
+                alert('Failed to mark as fulfilled: ' + (err.response?.data?.message || err.message));
+            }
         }
     };
 
@@ -47,9 +50,17 @@ const RequestCard = ({ request, onUpdate }) => {
         if (!confirm('Delete this blood request?')) return;
         try {
             await api.delete(`/blood-donation/requests/${request._id}`);
+            // Update UI immediately
             if (onUpdate) onUpdate();
         } catch (err) {
-            alert('Failed to delete request');
+            console.error('Error deleting request:', err);
+            // If request already deleted (404), still update UI
+            if (err.response?.status === 404) {
+                if (onUpdate) onUpdate();
+                alert('Request has already been removed.');
+            } else {
+                alert('Failed to delete request: ' + (err.response?.data?.message || err.message));
+            }
         }
     };
 
