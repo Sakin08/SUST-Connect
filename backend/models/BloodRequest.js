@@ -15,15 +15,21 @@ const bloodRequestSchema = new mongoose.Schema(
     location: { type: String, required: true },
     urgency: {
       type: String,
-      enum: ["low", "medium", "high", "critical"],
+      enum: ["low", "medium", "high", "critical", "urgent"],
       default: "medium",
     },
     message: { type: String },
+    description: { type: String }, // Alias for message
     contactPhone: { type: String, required: true },
+    contactNumber: { type: String }, // Alias for contactPhone
     neededBy: { type: Date },
+    requiredDate: { type: Date }, // Alias for neededBy
+    patientName: { type: String },
+    patientAge: { type: Number },
+    hospital: { type: String },
     status: {
       type: String,
-      enum: ["open", "fulfilled", "cancelled"],
+      enum: ["open", "fulfilled", "cancelled", "active"],
       default: "open",
     },
     responses: [

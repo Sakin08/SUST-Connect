@@ -12,12 +12,20 @@ const api = axios.create({
 // Add request interceptor to include access token
 api.interceptors.request.use(
   (config) => {
-    // Get access token from localStorage
-    const accessToken = localStorage.getItem("accessToken");
-    if (accessToken) {
-      config.headers.Authorization = `Bearer ${accessToken}`;
+    try {
+      // Get access token from localStorage
+      const accessToken = localStorage.getItem("accessToken");
+      if (accessToken) {
+        config.headers.Authorization = `Bearer ${accessToken}`;
+        console.log("✅ Token added to request:", config.url);
+      } else {
+        console.warn("⚠️ No access token found for request:", config.url);
+      }
+    } catch (error) {
+      console.error("❌ Error accessing localStorage:", error);
+      // iOS Safari private mode blocks localStorage
+      console.warn("This might be iOS Safari private browsing mode");
     }
-    console.log("Making request to:", config.url);
     return config;
   },
   (error) => {

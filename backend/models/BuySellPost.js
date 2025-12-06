@@ -11,7 +11,20 @@ const buySellPostSchema = new mongoose.Schema(
     user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
     views: { type: Number, default: 0 },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  }
 );
+
+// Virtual for comment count
+buySellPostSchema.virtual("commentCount", {
+  ref: "Comment",
+  localField: "_id",
+  foreignField: "postId",
+  count: true,
+  match: { postType: "buysell" },
+});
 
 export default mongoose.model("BuySellPost", buySellPostSchema);
