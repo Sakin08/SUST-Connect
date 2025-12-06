@@ -13,7 +13,7 @@ const upload = multer({ dest: "uploads/" });
 // Public route - anyone can view
 router.get("/", getActiveSchedule);
 
-// Admin only routes
+
 router.post("/", protect, adminOnly, upload.array("images", 5), uploadSchedule);
 router.delete("/:id", protect, adminOnly, deleteSchedule);
 
