@@ -50,8 +50,7 @@ api.interceptors.response.use(
       (error.response?.status === 401 &&
         error.config?.url?.includes("/auth/profile")) ||
       (error.response?.status === 404 &&
-        (error.config?.url?.includes("/blood-donation/donors/") ||
-          error.config?.url?.includes("/blood-donation/requests/")));
+        error.config?.url?.includes("/blood-donation/donors/"));
 
     if (!shouldSkipLog) {
       console.error("API Error:", error.response?.status, error.response?.data);

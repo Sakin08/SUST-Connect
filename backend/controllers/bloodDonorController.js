@@ -373,10 +373,6 @@ export const deleteBloodRequest = async (req, res) => {
     }
 
     await request.deleteOne();
-
-    // Invalidate blood requests cache
-    deleteCachePattern("route_/api/blood-donation/requests");
-
     res.json({ message: "Blood request deleted" });
   } catch (error) {
     res.status(500).json({ message: error.message });

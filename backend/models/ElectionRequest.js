@@ -7,7 +7,6 @@ const candidateSchema = new mongoose.Schema({
   },
   name: String,
   manifesto: String,
-  positionName: String, // Store which position this candidate is for
 });
 
 const electionRequestSchema = new mongoose.Schema(

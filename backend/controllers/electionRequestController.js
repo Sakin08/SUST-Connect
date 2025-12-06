@@ -337,33 +337,9 @@ export const approveRequest = async (req, res) => {
           );
 
           if (candidateUser) {
-            // Find the correct position for this candidate
-            let position = null;
-
-            if (request.type === "cr") {
-              // For CR elections, use the first (and only) position
-              position =
-                createdPositions.length > 0 ? createdPositions[0] : null;
-            } else {
-              // For society elections, match by position name
-              if (candidateData.positionName) {
-                position = createdPositions.find(
-                  (p) =>
-                    p.positionName.trim() === candidateData.positionName.trim()
-                );
-                console.log(
-                  `Matching position for ${candidateData.positionName}:`,
-                  position ? position.positionName : "NOT FOUND"
-                );
-              } else {
-                // Fallback to first position if no position name specified
-                position =
-                  createdPositions.length > 0 ? createdPositions[0] : null;
-                console.log(
-                  "⚠️ No positionName in candidate data, using first position"
-                );
-              }
-            }
+            // Find the position for this candidate (for CR elections, use first position)
+            const position =
+              createdPositions.length > 0 ? createdPositions[0] : null;
 
             if (position) {
               const newCandidate = await Candidate.create({
@@ -374,12 +350,10 @@ export const approveRequest = async (req, res) => {
                 status: "approved", // Auto-approve candidates from request
               });
               console.log(
-                `✅ Successfully added candidate: ${candidateUser.name} (${candidateData.registrationNumber}) to position: ${position.positionName}`
+                `✅ Successfully added candidate: ${candidateUser.name} (${candidateData.registrationNumber})`
               );
             } else {
-              console.log(
-                `❌ No position found to assign candidate to (looking for: ${candidateData.positionName})`
-              );
+              console.log("❌ No position found to assign candidate to");
             }
           } else {
             console.log(
