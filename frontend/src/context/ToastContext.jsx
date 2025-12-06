@@ -8,7 +8,20 @@ export const useToast = () => useContext(ToastContext);
 export const ToastProvider = ({ children }) => {
     const [toasts, setToasts] = useState([]);
 
-    const showToast = (message, type = 'success') => {
+    const showToast = (message, type = 'success', options = {}) => {
+        // Skip minor success messages unless forced
+        const minorMessages = [
+            'saved', 'liked', 'unliked', 'bookmarked', 'unbookmarked',
+            'copied', 'updated', 'removed'
+        ];
+
+        const isMinor = type === 'success' &&
+            minorMessages.some(word => message.toLowerCase().includes(word));
+
+        if (isMinor && !options.force) {
+            return; // Skip showing toast
+        }
+
         const id = Date.now();
         setToasts(prev => [...prev, { id, message, type }]);
     };
