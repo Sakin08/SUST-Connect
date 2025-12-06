@@ -9,7 +9,13 @@ body {
   background-attachment: fixed;
   background-repeat: no-repeat;
 }
-
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.animate-spin-slow {
+  animation: spin-slow 8s linear infinite;
+}
 body::before {
   content: '';
   position: fixed;
@@ -88,6 +94,67 @@ body::before {
   transition-duration: 150ms;
 }
 
+/* Navbar Animations */
+@keyframes dropdown-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.animate-dropdown-in {
+  animation: dropdown-in 0.2s ease-out;
+}
+
+@keyframes slide-in-left {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-slide-in-left {
+  animation: slide-in-left 0.3s ease-out forwards;
+}
+
+@keyframes slide-down {
+  from {
+    opacity: 0;
+    max-height: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    max-height: 1000px;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-down {
+  animation: slide-down 0.3s ease-out;
+}
+
+@keyframes pulse-subtle {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+.animate-pulse-subtle {
+  animation: pulse-subtle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
 /* Custom Scrollbar Styles */
 .overflow-y-auto::-webkit-scrollbar {
   width: 8px;
@@ -104,4 +171,127 @@ body::before {
 
 .overflow-y-auto::-webkit-scrollbar-thumb:hover {
   background: rgba(99, 102, 241, 0.5);
+}
+/* No
+tification Animations */
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-slideUp {
+  animation: slideUp 0.3s ease-out;
+}
+
+.animate-slideDown {
+  animation: slideDown 0.3s ease-out;
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.2s ease-out;
+}
+
+/* Custom Scrollbar */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Thin Scrollbar Styles */
+.scrollbar-thin {
+  scrollbar-width: thin;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scrollbar-thumb-indigo-300::-webkit-scrollbar-thumb {
+  background-color: rgb(165 180 252);
+  border-radius: 3px;
+}
+
+.scrollbar-thumb-indigo-400:hover::-webkit-scrollbar-thumb {
+  background-color: rgb(129 140 248);
+}
+
+.scrollbar-thumb-purple-300::-webkit-scrollbar-thumb {
+  background-color: rgb(216 180 254);
+  border-radius: 3px;
+}
+
+.scrollbar-thumb-purple-400:hover::-webkit-scrollbar-thumb {
+  background-color: rgb(192 132 252);
+}
+
+.scrollbar-thumb-pink-300::-webkit-scrollbar-thumb {
+  background-color: rgb(249 168 212);
+  border-radius: 3px;
+}
+
+.scrollbar-thumb-pink-400:hover::-webkit-scrollbar-thumb {
+  background-color: rgb(244 114 182);
+}
+
+.scrollbar-track-transparent::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Subtle zoom animation for hero background */
+@keyframes slow-zoom {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1.05);
+  }
+}
+
+.animate-slow-zoom {
+  animation: slow-zoom 20s ease-in-out infinite alternate;
+}
+
+/* Election UI Enhancements */
+.bg-size-200 {
+  background-size: 200%;
+}
+.bg-pos-0 {
+  background-position: 0%;
+}
+.bg-pos-100 {
+  background-position: 100%;
+  transition: background-position 0.5s ease;
+}
+.border-3 {
+  border-width: 3px;
 }
