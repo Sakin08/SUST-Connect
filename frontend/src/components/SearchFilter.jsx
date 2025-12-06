@@ -23,7 +23,7 @@ const SearchFilter = ({ onFilterChange, type = 'events' }) => {
     const handleFilterChange = (key, value) => {
         setFilters(prev => ({ ...prev, [key]: value }));
     };
-//filter system
+
     const clearFilters = () => {
         setSearchTerm('');
         setFilters({

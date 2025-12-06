@@ -1,14 +1,14 @@
 const FilterBar = ({ filters, onFilterChange, type }) => {
     return (
-        <div className="bg-white rounded-lg shadow-md p-4 mb-6">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="bg-white rounded-lg shadow-sm p-3 mb-4">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
                 {/* Sort */}
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Sort By</label>
+                    <label className="block text-xs font-semibold text-gray-700 mb-1">Sort By</label>
                     <select
                         value={filters.sort}
                         onChange={(e) => onFilterChange({ ...filters, sort: e.target.value })}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                     >
                         <option value="newest">Newest First</option>
                         <option value="oldest">Oldest First</option>
@@ -31,23 +31,23 @@ const FilterBar = ({ filters, onFilterChange, type }) => {
                 {type === 'buysell' && (
                     <>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">Min Price (৳)</label>
+                            <label className="block text-xs font-semibold text-gray-700 mb-1">Min Price (৳)</label>
                             <input
                                 type="number"
                                 value={filters.minPrice || ''}
                                 onChange={(e) => onFilterChange({ ...filters, minPrice: e.target.value })}
                                 placeholder="0"
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">Max Price (৳)</label>
+                            <label className="block text-xs font-semibold text-gray-700 mb-1">Max Price (৳)</label>
                             <input
                                 type="number"
                                 value={filters.maxPrice || ''}
                                 onChange={(e) => onFilterChange({ ...filters, maxPrice: e.target.value })}
                                 placeholder="Any"
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                             />
                         </div>
                     </>
@@ -56,23 +56,23 @@ const FilterBar = ({ filters, onFilterChange, type }) => {
                 {type === 'housing' && (
                     <>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">Min Rent (৳)</label>
+                            <label className="block text-xs font-semibold text-gray-700 mb-1">Min Rent (৳)</label>
                             <input
                                 type="number"
                                 value={filters.minRent || ''}
                                 onChange={(e) => onFilterChange({ ...filters, minRent: e.target.value })}
                                 placeholder="0"
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">Max Rent (৳)</label>
+                            <label className="block text-xs font-semibold text-gray-700 mb-1">Max Rent (৳)</label>
                             <input
                                 type="number"
                                 value={filters.maxRent || ''}
                                 onChange={(e) => onFilterChange({ ...filters, maxRent: e.target.value })}
                                 placeholder="Any"
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                             />
                         </div>
                     </>
@@ -80,20 +80,20 @@ const FilterBar = ({ filters, onFilterChange, type }) => {
 
                 {/* Location */}
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Location</label>
+                    <label className="block text-xs font-semibold text-gray-700 mb-1">Location</label>
                     <input
                         type="text"
                         value={filters.location || ''}
                         onChange={(e) => onFilterChange({ ...filters, location: e.target.value })}
                         placeholder="Any location"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                     />
                 </div>
             </div>
 
             <button
                 onClick={() => onFilterChange({ sort: 'newest' })}
-                className="mt-4 text-sm text-blue-600 hover:text-blue-700 font-medium"
+                className="mt-2 text-xs text-blue-600 hover:text-blue-700 font-semibold"
             >
                 Clear Filters
             </button>

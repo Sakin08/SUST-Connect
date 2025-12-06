@@ -18,7 +18,7 @@ const UserAvatar = ({ user, size = 'md', showOnline = true }) => {
         xl: 'w-4 h-4',
     };
 
-    return (//use avatar
+    return (
         <div className="relative inline-block">
             {user?.profilePicture ? (
                 <img

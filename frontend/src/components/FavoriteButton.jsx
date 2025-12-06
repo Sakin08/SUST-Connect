@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext.jsx';
 import api from '../api/axios.js';
-//
+
 const FavoriteButton = ({ postType, postId }) => {
     const { user } = useAuth();
     const [favorited, setFavorited] = useState(false);

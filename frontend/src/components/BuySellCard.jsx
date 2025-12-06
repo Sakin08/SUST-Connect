@@ -1,9 +1,10 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { canDelete } from "../utils/permissions";
 import PosterInfo from "./PosterInfo";
 import SaveButton from "./SaveButton";
-import { MapPin, Eye, Camera } from "lucide-react";
+import ReportButton from "./ReportButton";
+import { MapPin, MessageCircle, Camera, Edit } from "lucide-react";
 
 const BuySellCard = ({ post, onDelete }) => {
     const navigate = useNavigate();
@@ -33,107 +34,125 @@ const BuySellCard = ({ post, onDelete }) => {
         <div
             onClick={handleCardClick}
             className="
-                group bg-white rounded-xl shadow-sm border border-gray-100
-                hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-300 
-                cursor-pointer overflow-hidden flex flex-col relative
-                hover:border-blue-100
+                group bg-white/95 backdrop-blur-xl rounded-2xl shadow-lg border border-gray-200
+                hover:shadow-2xl hover:shadow-blue-500/20 hover:-translate-y-1 hover:border-blue-300 transition-all duration-300 
+                cursor-pointer overflow-hidden flex flex-col relative h-full
             "
         >
             {/* IMAGE SECTION */}
-            <div className="relative h-48 bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden">
+            <div className="relative h-56 bg-gradient-to-br from-gray-100 via-gray-50 to-gray-100 overflow-hidden">
                 {mainImage ? (
                     <>
                         <img
                             src={mainImage}
-                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
+                            className="w-full h-full object-cover group-hover:scale-110 transition-all duration-700"
                             alt={post.title}
                         />
-                        {/* Enhanced gradient overlay */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-300"></div>
+                        {/* Clean gradient overlay */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent"></div>
+                        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/0 to-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                     </>
                 ) : (
-                    <div className="h-full w-full flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
-                        <Camera className="w-20 h-20 text-gray-300" strokeWidth={1.5} />
+                    <div className="h-full w-full flex items-center justify-center bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 relative overflow-hidden">
+                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(59,130,246,0.1),transparent_50%)]"></div>
+                        <Camera className="w-24 h-24 text-gray-400 relative z-10 group-hover:scale-110 transition-transform duration-300" strokeWidth={1.5} />
                     </div>
                 )}
 
-                {/* Save Button - Enhanced */}
+                {/* Floating Save Button */}
                 <div
-                    className="absolute top-4 right-4 z-20 save-area opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                    className="absolute top-3 right-3 z-20 save-area opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                     onClick={(e) => e.stopPropagation()}
                 >
-                    <div className="backdrop-blur-md bg-white/90 rounded-full p-0.5 shadow-lg">
-                        <SaveButton postId={post._id} postType="buysell" />
-                    </div>
+                    <SaveButton postId={post._id} postType="buysell" />
                 </div>
 
-                {/* Multiple images badge - Enhanced */}
+                {/* Multiple images badge */}
                 {hasMultipleImages && (
-                    <div className="absolute bottom-4 right-4 bg-black/70 backdrop-blur-md text-white px-3 py-2 rounded-lg text-xs font-medium flex items-center gap-2 shadow-lg">
-                        <Camera size={16} strokeWidth={2} />
-                        <span>{post.images.length} photos</span>
+                    <div className="absolute bottom-3 left-3 bg-gradient-to-r from-blue-600 to-indigo-600 backdrop-blur-md text-white px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-2 shadow-lg border border-blue-400/30">
+                        <Camera size={14} strokeWidth={2.5} />
+                        <span>{post.images.length} Photos</span>
                     </div>
                 )}
             </div>
 
             {/* CONTENT */}
-            <div className="p-4 flex flex-col flex-grow">
+            <div className="p-5 flex flex-col flex-grow relative">
+                {/* Decorative corner accent */}
+                <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-blue-500/10 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
 
                 {/* TITLE */}
-                <h3 className="text-lg font-bold text-gray-900 line-clamp-2 mb-2 group-hover:text-blue-600 transition-colors leading-snug">
+                <h3 className="text-xl font-bold text-gray-900 line-clamp-2 mb-4 leading-tight group-hover:text-blue-600 transition-colors duration-300 relative z-10">
                     {post.title}
                 </h3>
 
-                {/* PRICE - Enhanced styling */}
-                <div className="mb-3">
-                    <p className="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-blue-500 tracking-tight">
-                        {formatPrice(post.price)}
-                    </p>
+                {/* PRICE */}
+                <div className="mb-4">
+                    <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-emerald-500 to-green-600 rounded-xl shadow-lg shadow-emerald-500/30 group-hover:shadow-emerald-500/50 transition-shadow duration-300">
+                        <span className="text-xs font-bold text-emerald-100 uppercase tracking-wider">Price</span>
+                        <div className="w-px h-5 bg-white/30"></div>
+                        <p className="text-2xl font-black text-white tracking-tight">
+                            {formatPrice(post.price)}
+                        </p>
+                    </div>
                 </div>
 
-                {/* LOCATION - Enhanced */}
-                <div className="flex items-center text-sm text-gray-600 mb-3 bg-gray-50 rounded-lg px-3 py-2 max-w-full">
-                    <MapPin size={16} className="mr-2 text-blue-500 flex-shrink-0" strokeWidth={2} />
-                    <span className="truncate font-medium">{post.location}</span>
+                {/* LOCATION */}
+                <div className="flex items-center gap-3 text-sm font-semibold text-gray-700 mb-4 bg-blue-50 rounded-lg p-3 border border-blue-200">
+                    <div className="p-1.5 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg shadow-md">
+                        <MapPin size={16} className="text-white flex-shrink-0" />
+                    </div>
+                    <span className="truncate">{post.location}</span>
                 </div>
 
                 {/* DESCRIPTION */}
-                <p className="text-sm text-gray-600 line-clamp-2 mb-3 leading-relaxed">
+                <p className="text-sm text-gray-600 line-clamp-2 mb-4 leading-relaxed flex-1">
                     {post.description}
                 </p>
 
                 {/* POSTER INFO */}
-                <div className="border-t border-gray-100 pt-3 mt-auto bg-gradient-to-r from-gray-50/50 to-transparent -mx-4 px-4 pb-1 rounded-b-lg">
-                    <PosterInfo user={post.user} createdAt={post.createdAt} />
+                <div className="border-t border-gray-200 pt-4 mt-auto">
+                    <PosterInfo user={post.user} createdAt={post.createdAt} compact={true} />
                 </div>
 
                 {/* FOOTER */}
-                <div className="flex items-center justify-between text-xs mt-3 pt-3 border-t border-gray-100">
-                    {/* Views - Enhanced */}
-                    <div className="flex items-center text-gray-500 bg-gray-50 rounded-lg px-3 py-2">
-                        <Eye size={16} className="mr-2 text-gray-400" strokeWidth={2} />
-                        <span className="font-semibold text-gray-700">{post.views?.toLocaleString() || 0}</span>
-                        <span className="ml-1">views</span>
+                <div className="flex items-center justify-between text-sm pt-4 border-t border-gray-200 mt-3">
+                    {/* Comments Count */}
+                    <div className="flex items-center gap-2 bg-blue-50 px-4 py-2 rounded-lg border border-blue-200">
+                        <MessageCircle size={16} className="text-blue-600" />
+                        <span className="font-bold text-blue-700">{post.commentCount || 0}</span>
+                        <span className="text-xs text-blue-600 hidden sm:inline">comments</span>
                     </div>
 
-                    {/* Delete Button - Enhanced */}
-                    {showDelete && (
-                        <button
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                if (window.confirm("Delete this post?")) {
-                                    onDelete(post._id);
-                                }
-                            }}
-                            className="
-                                text-red-600 px-4 py-2 rounded-lg border border-red-200
-                                hover:bg-red-600 hover:text-white hover:border-red-600
-                                transition-all duration-200 text-xs font-semibold
-                                hover:shadow-md active:scale-95
-                            "
-                        >
-                            Delete
-                        </button>
+                    {/* Edit & Delete Buttons */}
+                    {showDelete ? (
+                        <div className="flex gap-2">
+                            <Link
+                                to={`/buysell/edit/${post._id}`}
+                                onClick={(e) => e.stopPropagation()}
+                                className="flex items-center gap-1.5 text-blue-600 px-4 py-2 rounded-lg border border-blue-200 bg-blue-50 hover:bg-blue-600 hover:text-white transition-all text-xs font-bold"
+                            >
+                                <Edit size={14} />
+                                <span>Edit</span>
+                            </Link>
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    if (window.confirm("Delete this post?")) {
+                                        onDelete(post._id);
+                                    }
+                                }}
+                                className="px-4 py-2 rounded-lg border border-red-200 bg-red-50 text-red-600 hover:bg-red-600 hover:text-white transition-all text-xs font-bold"
+                            >
+                                Delete
+                            </button>
+                        </div>
+                    ) : (
+                        <ReportButton
+                            itemId={post._id}
+                            itemType="buysell"
+                            reportedUserId={post.user?._id}
+                        />
                     )}
                 </div>
             </div>

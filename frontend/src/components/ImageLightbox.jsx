@@ -21,7 +21,7 @@ const ImageLightbox = ({ images, isOpen, onClose, initialIndex = 0 }) => {
 
     return (
         <div
-            className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center"
+            className="fixed inset-0 bg-black/95 z-[9999] flex items-center justify-center"
             onClick={onClose}
             onKeyDown={handleKeyDown}
             tabIndex={0}
