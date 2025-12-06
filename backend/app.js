@@ -36,7 +36,11 @@ import electionRequestRoutes from "./routes/electionRequestRoutes.js";
 const app = express();
 
 // CORS configuration for deployment
-const allowedOrigins = [process.env.FRONTEND_URL || "http://localhost:5173"];
+const allowedOrigins = [
+  process.env.FRONTEND_URL || "http://localhost:5173",
+  process.env.CLIENT_URL || "http://localhost:5173",
+  "https://sust-connect-silk.vercel.app", // Your Vercel frontend URL
+].filter(Boolean);
 
 const corsOptions = {
   origin: function (origin, callback) {
